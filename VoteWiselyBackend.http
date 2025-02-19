@@ -1,0 +1,6 @@
+@VoteWiselyBackend_HostAddress = http://localhost:5293
+
+GET {{VoteWiselyBackend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
