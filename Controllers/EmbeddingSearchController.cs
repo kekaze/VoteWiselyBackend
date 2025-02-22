@@ -20,8 +20,14 @@ namespace VoteWiselyBackend.Controllers
             string inFavor = string.Join(", ", candidateCriteria.InFavor);
             string against = string.Join(", ", candidateCriteria.Against);
             string platforms = string.Join(", ", candidateCriteria.Platforms);
-            string criteria = $"In favor to: {inFavor}\nAgainst: {against}\nPlatforms: {platforms}";
+
+            string inFavorString = candidateCriteria.InFavor.Count == 0 ? "" : $"In favor to: {string.Join(", ", candidateCriteria.InFavor)}\n";
+            string againtsString = candidateCriteria.Against.Count == 0 ? "" : $"Againts: {string.Join(", ", candidateCriteria.Against)}\n";
+            string platformsString = candidateCriteria.Platforms.Count == 0 ? "" : $"Political Platform: {string.Join(", ", candidateCriteria.Platforms)}";
+            string criteria = $"{inFavorString}{againtsString}{platformsString}";
+
             // Vectorize the text
+
             // Perform similarity search
             // Receive top 12 with most similarity
             // Prepare received data
