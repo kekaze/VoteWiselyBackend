@@ -7,12 +7,10 @@ namespace VoteWiselyBackend.Models
     public class User : BaseModel
     {
         [PrimaryKey("id")]
-        public required string Id { get; set; }
-        [Column("name")]
-        public required string FullName { get; set; }
+        public Guid Id { get; set; }
+        [Column("full_name")]
+        public string FullName { get; set; }
         [Column("email")]
-        public required string Email { get; set; }
-        [Column("create_at")]
-        public DateTime CreatedAt { get; set; }
+        public string Email { get; set; }
     }
 }
