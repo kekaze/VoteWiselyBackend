@@ -31,6 +31,8 @@ builder.Services.AddCors(options =>
 builder.Services.AddSingleton<ISupabaseClientFactory, SupabaseClientFactory>();
 await builder.Services.AddSupabaseClientAsync();
 
+builder.Services.AddHttpClient();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

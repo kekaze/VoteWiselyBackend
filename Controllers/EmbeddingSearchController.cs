@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Net.Http;
 using VoteWiselyBackend.Contracts;
+
 
 namespace VoteWiselyBackend.Controllers
 {
@@ -8,9 +10,11 @@ namespace VoteWiselyBackend.Controllers
     [Route("api/v1/[controller]")]
     public class EmbeddingSearchController : Controller
     {
-        public EmbeddingSearchController()
+
+        private readonly HttpClient _httpClient;
+        public EmbeddingSearchController(HttpClient httpClient)
         {
-            // constructor
+            _httpClient = httpClient;
         }
 
         [HttpPost("similarity-search")]
@@ -27,12 +31,13 @@ namespace VoteWiselyBackend.Controllers
             string criteria = $"{inFavorString}{againtsString}{platformsString}";
 
             // Vectorize the text
-
+            var response = await _httpClient.PostAsJsonAsync("http://127.0.0.1:8000/embed", new { criteria });
+            var responseJson = await response.Content.ReadFromJsonAsync<EmbeddingResponse>();
             // Perform similarity search
             // Receive top 12 with most similarity
             // Prepare received data
-            // Send clean data to front end
-            return Ok(criteria);
+            // Send clean data to front end 
+            return Ok(responseJson.Embedding);
         }
     }
 }
