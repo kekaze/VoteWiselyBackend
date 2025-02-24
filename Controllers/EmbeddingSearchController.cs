@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.Net.Http;
 using VoteWiselyBackend.Contracts;
+using VoteWiselyBackend.Services;
 
 
 namespace VoteWiselyBackend.Controllers
@@ -20,19 +21,12 @@ namespace VoteWiselyBackend.Controllers
         [HttpPost("similarity-search")]
         public async Task<IActionResult> PerformSimilaritySearch([FromBody] PoliticalStance candidateCriteria)
         {
-            // Process candidateCriteria into a text in preparation for vectorization
-            string inFavor = string.Join(", ", candidateCriteria.InFavor);
-            string against = string.Join(", ", candidateCriteria.Against);
-            string platforms = string.Join(", ", candidateCriteria.Platforms);
-
-            string inFavorString = candidateCriteria.InFavor.Count == 0 ? "" : $"In favor to: {string.Join(", ", candidateCriteria.InFavor)}\n";
-            string againtsString = candidateCriteria.Against.Count == 0 ? "" : $"Againts: {string.Join(", ", candidateCriteria.Against)}\n";
-            string platformsString = candidateCriteria.Platforms.Count == 0 ? "" : $"Political Platform: {string.Join(", ", candidateCriteria.Platforms)}";
-            string criteria = $"{inFavorString}{againtsString}{platformsString}";
+            string criteria = DataTransformationServices.PrepareString(candidateCriteria);
 
             // Vectorize the text
             var response = await _httpClient.PostAsJsonAsync("http://127.0.0.1:8000/embed", new { criteria });
             var responseJson = await response.Content.ReadFromJsonAsync<EmbeddingResponse>();
+
             // Perform similarity search
             // Receive top 12 with most similarity
             // Prepare received data
