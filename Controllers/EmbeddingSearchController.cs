@@ -28,6 +28,8 @@ namespace VoteWiselyBackend.Controllers
             var responseJson = await response.Content.ReadFromJsonAsync<EmbeddingResponse>();
 
             // Perform similarity search
+            var searchResult = await _httpClient.PostAsJsonAsync("http://127.0.0.1:8000/search", new { responseJson?.Embedding });
+
             // Receive top 12 with most similarity
             // Prepare received data
             // Send clean data to front end 
