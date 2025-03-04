@@ -1,8 +1,8 @@
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
-using System;
+using Pinecone;
 using VoteWiselyBackend.Extensions;
 using VoteWiselyBackend.Factories.Implementations;
 using VoteWiselyBackend.Factories.Interfaces;
+using VoteWiselyBackend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +30,14 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddSingleton<ISupabaseClientFactory, SupabaseClientFactory>();
 await builder.Services.AddSupabaseClientAsync();
+
+builder.Services.AddSingleton<PineconeService>(sp =>
+{
+    string pineconeKey = Environment.GetEnvironmentVariable("PINECONE_API_KEY");
+    string indexName = Environment.GetEnvironmentVariable("PINECONE_INDEX_NAME");
+    PineconeClient pineconeClient = new PineconeClient(pineconeKey);
+    return new PineconeService(pineconeClient, indexName);
+});
 
 builder.Services.AddHttpClient();
 
