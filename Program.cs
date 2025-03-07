@@ -34,9 +34,9 @@ await builder.Services.AddSupabaseClientAsync();
 builder.Services.AddSingleton<PineconeService>(sp =>
 {
     string pineconeKey = Environment.GetEnvironmentVariable("PINECONE_API_KEY");
-    string indexName = Environment.GetEnvironmentVariable("PINECONE_INDEX_NAME");
+    string indexHost = Environment.GetEnvironmentVariable("PINECONE_INDEX_HOST");
     PineconeClient pineconeClient = new PineconeClient(pineconeKey);
-    return new PineconeService(pineconeClient, indexName);
+    return new PineconeService(pineconeClient, indexHost);
 });
 
 builder.Services.AddHttpClient();

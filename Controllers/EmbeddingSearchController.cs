@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Any;
 using Newtonsoft.Json;
 using System.Net.Http;
@@ -14,14 +15,17 @@ namespace VoteWiselyBackend.Controllers
     {
 
         private readonly HttpClient _httpClient;
-        public EmbeddingSearchController(HttpClient httpClient)
+        private readonly PineconeService _pineconeService;
+        public EmbeddingSearchController(HttpClient httpClient, PineconeService pineconeService)
         {
             _httpClient = httpClient;
+            _pineconeService = pineconeService;
         }
 
         [HttpPost("similarity-search")]
         public async Task<IActionResult> PerformSimilaritySearch([FromBody] PoliticalStance candidateCriteria)
         {
+            var similarCandidates = new Pinecone.QueryResponse();
             string criteria = DataTransformationServices.PrepareString(candidateCriteria);
 
             // Vectorize the text
@@ -29,11 +33,15 @@ namespace VoteWiselyBackend.Controllers
             var responseJson = await response.Content.ReadFromJsonAsync<EmbeddingResponse>();
 
             // Perform similarity search
-
+            if (responseJson != null)
+            {
+                similarCandidates = await _pineconeService.QueryIndexAsync(responseJson.Embedding, 2);
+            }
+            
             // Receive top 12 with most similarity
             // Prepare received data
             // Send clean data to front end 
-            return Ok(responseJson.Embedding);
+            return Ok(similarCandidates.ToString());
         }
     }
 }
