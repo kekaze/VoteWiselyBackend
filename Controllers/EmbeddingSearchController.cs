@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Any;
-using Newtonsoft.Json;
-using System.Net.Http;
+using System.Text.Json;
 using VoteWiselyBackend.Contracts;
 using VoteWiselyBackend.Services;
+using Pinecone;
 
 
 namespace VoteWiselyBackend.Controllers
@@ -16,10 +14,12 @@ namespace VoteWiselyBackend.Controllers
 
         private readonly HttpClient _httpClient;
         private readonly PineconeService _pineconeService;
-        public EmbeddingSearchController(HttpClient httpClient, PineconeService pineconeService)
+        private readonly JsonSerializerOptions _options;
+        public EmbeddingSearchController(HttpClient httpClient, PineconeService pineconeService, JsonSerializerOptions jsonOptions)
         {
             _httpClient = httpClient;
             _pineconeService = pineconeService;
+            _options = jsonOptions;
         }
 
         [HttpPost("similarity-search")]
@@ -27,6 +27,7 @@ namespace VoteWiselyBackend.Controllers
         {
             var similarCandidates = new Pinecone.QueryResponse();
             string criteria = DataTransformationServices.PrepareString(candidateCriteria);
+            uint maxSentorialWinners = 12;
 
             // Vectorize the text
             var response = await _httpClient.PostAsJsonAsync("http://127.0.0.1:8000/embed", new { criteria });
@@ -35,13 +36,15 @@ namespace VoteWiselyBackend.Controllers
             // Perform similarity search
             if (responseJson != null)
             {
-                similarCandidates = await _pineconeService.QueryIndexAsync(responseJson.Embedding, 2);
+                similarCandidates = await _pineconeService.QueryIndexAsync(responseJson.Embedding, maxSentorialWinners);
             }
-            
+
             // Receive top 12 with most similarity
+            var matchedCandidates = JsonSerializer.Deserialize<PineconeMatchDto>(similarCandidates.ToString(), _options);
+
             // Prepare received data
             // Send clean data to front end 
-            return Ok(similarCandidates.ToString());
+            return Ok(matchedCandidates);
         }
     }
 }

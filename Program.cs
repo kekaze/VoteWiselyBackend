@@ -1,4 +1,5 @@
 using Pinecone;
+using System.Text.Json;
 using VoteWiselyBackend.Extensions;
 using VoteWiselyBackend.Factories.Implementations;
 using VoteWiselyBackend.Factories.Interfaces;
@@ -37,6 +38,11 @@ builder.Services.AddSingleton<PineconeService>(sp =>
     string indexHost = Environment.GetEnvironmentVariable("PINECONE_INDEX_HOST");
     PineconeClient pineconeClient = new PineconeClient(pineconeKey);
     return new PineconeService(pineconeClient, indexHost);
+});
+
+builder.Services.AddSingleton(new JsonSerializerOptions
+{
+    PropertyNameCaseInsensitive = true
 });
 
 builder.Services.AddHttpClient();
