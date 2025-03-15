@@ -31,13 +31,14 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddSingleton<ISupabaseClientFactory, SupabaseClientFactory>();
 await builder.Services.AddSupabaseClientAsync();
+builder.Services.AddScoped<SupabaseServices>();
 
-builder.Services.AddSingleton<PineconeService>(sp =>
+builder.Services.AddSingleton(sp =>
 {
     string pineconeKey = Environment.GetEnvironmentVariable("PINECONE_API_KEY");
     string indexHost = Environment.GetEnvironmentVariable("PINECONE_INDEX_HOST");
     PineconeClient pineconeClient = new PineconeClient(pineconeKey);
-    return new PineconeService(pineconeClient, indexHost);
+    return new PineconeServices(pineconeClient, indexHost);
 });
 
 builder.Services.AddSingleton(new JsonSerializerOptions
@@ -57,6 +58,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("Policy-1");
 
 app.UseAuthorization();
 
