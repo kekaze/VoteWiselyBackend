@@ -25,5 +25,7 @@ namespace VoteWiselyBackend.Contracts
         public string InFavor { get; set; }
         public string Name { get; set; }
         public string Platforms { get; set; }
+        [JsonPropertyName("political_party")]
+        public string PoliticalParty { get; set; }
     }
 }

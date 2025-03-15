@@ -3,12 +3,12 @@ using VoteWiselyBackend.Contracts;
 
 namespace VoteWiselyBackend.Services
 {
-    public class PineconeService
+    public class PineconeServices
     {
         private readonly PineconeClient _pineconeClient;
         private readonly string _indexHost;
 
-        public PineconeService(PineconeClient pineconeClient, string indexHost)
+        public PineconeServices(PineconeClient pineconeClient, string indexHost)
         {
             _pineconeClient = pineconeClient;
             _indexHost = indexHost;

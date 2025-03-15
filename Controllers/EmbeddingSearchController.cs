@@ -13,19 +13,21 @@ namespace VoteWiselyBackend.Controllers
     {
 
         private readonly HttpClient _httpClient;
-        private readonly PineconeService _pineconeService;
+        private readonly PineconeServices _pineconeService;
         private readonly JsonSerializerOptions _options;
-        public EmbeddingSearchController(HttpClient httpClient, PineconeService pineconeService, JsonSerializerOptions jsonOptions)
+        private readonly SupabaseServices _supabaseServices;
+        public EmbeddingSearchController(HttpClient httpClient, PineconeServices pineconeService, JsonSerializerOptions jsonOptions, SupabaseServices supabaseServices)
         {
             _httpClient = httpClient;
             _pineconeService = pineconeService;
             _options = jsonOptions;
+            _supabaseServices = supabaseServices;
         }
 
         [HttpPost("similarity-search")]
         public async Task<IActionResult> PerformSimilaritySearch([FromBody] PoliticalStance candidateCriteria)
         {
-            var similarCandidates = new Pinecone.QueryResponse();
+            var similarCandidates = new QueryResponse();
             string criteria = DataTransformationServices.PrepareString(candidateCriteria);
             uint maxSentorialWinners = 12;
 
@@ -39,12 +41,11 @@ namespace VoteWiselyBackend.Controllers
                 similarCandidates = await _pineconeService.QueryIndexAsync(responseJson.Embedding, maxSentorialWinners);
             }
 
-            // Receive top 12 with most similarity
-            var matchedCandidates = JsonSerializer.Deserialize<PineconeMatchDto>(similarCandidates.ToString(), _options);
+            // save the result and the selected candidate criteria to Supabase
+            await _supabaseServices.SaveResults(similarCandidates.ToString());
 
-            // Prepare received data
-            // Send clean data to front end 
-            return Ok(matchedCandidates);
+            // handle exception errors
+            return Ok();
         }
     }
 }
