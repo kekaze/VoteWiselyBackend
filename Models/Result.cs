@@ -8,8 +8,8 @@ namespace VoteWiselyBackend.Models
     {
         [PrimaryKey("id")]
         public int Id { get; set; }
-        //[Column("reference")]
-        //public Guid? Reference { get; set; }
+        [Column("reference")]
+        public Guid? Reference { get; set; }
         [Column("result")]
         public string ResultString { get; set; }
         [Column("type")]
