@@ -1,6 +1,8 @@
-﻿using System.Text.Json;
+﻿using Supabase.Postgrest.Responses;
+using System.Text.Json;
 using VoteWiselyBackend.Contracts;
 using VoteWiselyBackend.Models;
+using System.Diagnostics;
 
 namespace VoteWiselyBackend.Services
 {
@@ -28,6 +30,17 @@ namespace VoteWiselyBackend.Services
                 Console.WriteLine(error.Message);
                 throw;
             }
+        }
+
+        public async Task<string?> GetResult(Guid refId)
+        {
+            var result = await _supabaseClient
+                .From<Result>()
+                .Select(x => new object[] { x.ResultString })
+                .Where(x => x.Reference == refId)
+                .Get();
+            
+            return result.Model.ResultString;
         }
     }
 }
