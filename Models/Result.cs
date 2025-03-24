@@ -1,20 +1,24 @@
 ﻿using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
+using System.Text.Json.Serialization;
 
 namespace VoteWiselyBackend.Models
 {
-    [Table("results")]
+    [Table("phelection_results")]
     public class Result : BaseModel
     {
         [PrimaryKey("id")]
+        [JsonIgnore]
         public int Id { get; set; }
         [Column("reference")]
-        public Guid? Reference { get; set; }
-        [Column("result")]
-        public string ResultString { get; set; }
+        public Guid Reference { get; set; }
+        [Column("score")]
+        public float Score { get; set; }
+        [Column("candidate_name")]
+        public string? CandidateName { get; set; }
+        [Column("political_party")]
+        public string? PoliticalParty { get; set; }
         [Column("type")]
-        public string Type { get; set; }
-        //[Column("created_by")]
-        //public Guid created_by { get; set; }
+        public string? Type { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using System.Text.Json;
 using VoteWiselyBackend.Contracts;
 using VoteWiselyBackend.Services;
+using VoteWiselyBackend.Models;
 using Pinecone;
 
 
@@ -27,8 +28,10 @@ namespace VoteWiselyBackend.Controllers
         [HttpPost("similarity-search")]
         public async Task<IActionResult> PerformSimilaritySearch([FromBody] PoliticalStance candidateCriteria)
         {
-            var similarCandidates = new QueryResponse();
             string criteria = DataTransformationServices.PrepareString(candidateCriteria);
+            var similarCandidates = new QueryResponse();
+            var resultVectorSearch = new List<ScoredVector>();
+            var resultModel = new List<Result>();
             uint maxSentorialWinners = 12;
 
             // Vectorize the text
@@ -42,10 +45,28 @@ namespace VoteWiselyBackend.Controllers
             }
 
             // save the result and the selected candidate criteria to Supabase
-            await _supabaseServices.SaveResults(similarCandidates.ToString());
+            if (similarCandidates.Matches != null)
+            {
+                resultVectorSearch = [.. similarCandidates.Matches];
+            }
+
+            foreach (var result in resultVectorSearch)
+            {
+                resultModel.Add(
+                    new Result
+                    {
+                        Reference = Guid.Parse(result.Id),
+                        Score = (float)result.Score,
+                        CandidateName = result.Metadata["name"].ToString(),
+                        PoliticalParty = result.Metadata["political_party"].ToString(),
+                        Type = "admin_event"
+                    }
+                );
+            }
+            var saveResponse = await _supabaseServices.SaveResults(resultModel);
 
             // handle exception errors
-            return Ok();
+            return Ok(saveResponse);
         }
     }
 }
