@@ -16,13 +16,13 @@ namespace VoteWiselyBackend.Controllers
         {
             _supabaseServices = supabaseService;
         }
-        [HttpGet("{refId}")]
-        public async Task<QueryResponse> GetSingleResult(Guid refId)
-        {
-            var result = await _supabaseServices.GetResult(refId);
-            var resultJson = JsonConvert.DeserializeObject<QueryResponse>(result);
+        //[HttpGet("{refId}")]
+        //public async Task<QueryResponse> GetSingleResult(Guid refId)
+        //{
+        //    var result = await _supabaseServices.GetResult(refId);
+        //    var resultJson = JsonConvert.DeserializeObject<QueryResponse>(result);
 
-            return resultJson;
-        }
+        //    return resultJson;
+        //}
     }
 }

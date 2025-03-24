@@ -13,17 +13,11 @@ namespace VoteWiselyBackend.Services
         {
             _supabaseClient = supabaseClient;
         }
-        public async Task SaveResults(string matchedCandidatesString)
+        public async Task<ModeledResponse<Result>> SaveResults(List<Result> resultModel)
         {
             try
             {
-                var model = new Result
-                {
-                    ResultString = matchedCandidatesString,
-                    Type = "admin_event"
-                };
-
-                await _supabaseClient.From<Result>().Insert(model);
+                return await _supabaseClient.From<Result>().Insert(resultModel);
             }
             catch (Exception error)
             {
@@ -32,15 +26,15 @@ namespace VoteWiselyBackend.Services
             }
         }
 
-        public async Task<string?> GetResult(Guid refId)
-        {
-            var result = await _supabaseClient
-                .From<Result>()
-                .Select(x => new object[] { x.ResultString })
-                .Where(x => x.Reference == refId)
-                .Get();
+        //public async Task<string?> GetResult(Guid refId)
+        //{
+        //    var result = await _supabaseClient
+        //        .From<Result>()
+        //        .Select(x => new object[] { x.ResultString })
+        //        .Where(x => x.Reference == refId)
+        //        .Get();
             
-            return result.Model.ResultString;
-        }
+        //    return result.Model.ResultString;
+        //}
     }
 }
