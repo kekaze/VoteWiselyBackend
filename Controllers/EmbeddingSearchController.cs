@@ -47,26 +47,30 @@ namespace VoteWiselyBackend.Controllers
             // save the result and the selected candidate criteria to Supabase
             if (similarCandidates.Matches != null)
             {
-                resultVectorSearch = [.. similarCandidates.Matches];
+                resultVectorSearch = similarCandidates.Matches.ToList();
             }
 
+            Guid resultReference = Guid.NewGuid();
             foreach (var result in resultVectorSearch)
             {
-                resultModel.Add(
-                    new Result
-                    {
-                        Reference = Guid.Parse(result.Id),
-                        Score = (float)result.Score,
-                        CandidateName = result.Metadata["name"].ToString(),
-                        PoliticalParty = result.Metadata["political_party"].ToString(),
-                        Type = "admin_event"
-                    }
-                );
+                if (result.Metadata != null)
+                {
+                    resultModel.Add(
+                        new Result
+                        {
+                            Reference = resultReference,
+                            Score = (float)result.Score,
+                            CandidateName = $"#{result.Metadata["ballot_number"].Value} {result.Metadata["name"].Value}",
+                            PoliticalParty = (string)result.Metadata["political_party"].Value,
+                            Type = "admin_event"
+                        }
+                    );
+                }
             }
             var saveResponse = await _supabaseServices.SaveResults(resultModel);
 
             // handle exception errors
-            return Ok(saveResponse);
+            return Ok();
         }
     }
 }
