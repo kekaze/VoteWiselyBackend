@@ -17,23 +17,14 @@ namespace VoteWiselyBackend.Services
         public async Task<QueryResponse> QueryIndexAsync(float[] queryVector, uint topK = 5)
         {
             var index = _pineconeClient.Index(host: _indexHost);
-
             var queryRequest = new QueryRequest
             {
-                TopK = topK,
                 Vector = queryVector,
-                IncludeMetadata = true
+                TopK = topK,
+                IncludeMetadata = true,
+                Namespace = "senators_2025"
             };
-            var response = await index.QueryAsync(
-                new QueryRequest
-                {
-                    Vector = queryVector,
-                    TopK = topK,
-                    IncludeMetadata = true,
-                    Namespace = "senators_2025"
-                }
-            );
-            return response;
+            return await index.QueryAsync(queryRequest);
         }
 
     }
