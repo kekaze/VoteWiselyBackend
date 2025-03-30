@@ -53,7 +53,6 @@ namespace VoteWiselyBackend.Controllers
             }
             catch (Exception ex)
             {
-                // Log the error
                 return StatusCode(500, "An error occurred during registration");
             }
         }
