@@ -15,13 +15,11 @@ namespace VoteWiselyBackend.Controllers
 
         private readonly HttpClient _httpClient;
         private readonly PineconeServices _pineconeService;
-        private readonly JsonSerializerOptions _options;
         private readonly SupabaseServices _supabaseServices;
-        public EmbeddingSearchController(HttpClient httpClient, PineconeServices pineconeService, JsonSerializerOptions jsonOptions, SupabaseServices supabaseServices)
+        public EmbeddingSearchController(HttpClient httpClient, PineconeServices pineconeService, SupabaseServices supabaseServices)
         {
             _httpClient = httpClient;
             _pineconeService = pineconeService;
-            _options = jsonOptions;
             _supabaseServices = supabaseServices;
         }
 
