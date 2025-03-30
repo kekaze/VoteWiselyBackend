@@ -2,6 +2,7 @@
 using VoteWiselyBackend.Models;
 using VoteWiselyBackend.Contracts;
 using Supabase.Gotrue;
+using VoteWiselyBackend.Services;
 
 namespace VoteWiselyBackend.Controllers
 {
@@ -9,11 +10,11 @@ namespace VoteWiselyBackend.Controllers
     [Route("api/v1/[controller]")]
     public class AuthController : Controller
     {
-        private readonly Supabase.Client _supabaseClient;
+        private readonly AuthServices _authServices;
 
-        public AuthController(Supabase.Client supabaseClient)
+        public AuthController(AuthServices authServices)
         {
-            _supabaseClient = supabaseClient;
+            _authServices = authServices;
         }
 
         [HttpPost("signup")]
@@ -21,30 +22,14 @@ namespace VoteWiselyBackend.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(request.FullName) ||
-                    string.IsNullOrEmpty(request.Email) ||
-                    string.IsNullOrEmpty(request.Password))
+                bool validRequest = _authServices.ValidateSignUpRequest(request);
+                if (!validRequest)
                 {
-                    return BadRequest("All fields are required");
+                    return BadRequest("Something's wrong with your request");
                 }
 
-                if (request.Password != request.ConfirmPassword)
-                {
-                    return BadRequest("Passwords do not match");
-                }
-                var authResponse = await _supabaseClient.Auth.SignUp(
-                    request.Email,
-                    request.Password,
-                    options: new SignUpOptions
-                    {
-                        Data = new Dictionary<string, object>
-                        {
-                            { "full_name", request.FullName }
-                        }
-                    }
-                );
-
-                if (authResponse?.User == null)
+                var savedUser = await _authServices.SignUpUser(request);
+                if (savedUser?.User == null)
                 {
                     return BadRequest("Failed to create user");
                 }
