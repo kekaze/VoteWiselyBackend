@@ -41,11 +41,6 @@ builder.Services.AddSingleton(sp =>
     return new PineconeServices(pineconeClient, indexHost);
 });
 
-builder.Services.AddSingleton(new JsonSerializerOptions
-{
-    PropertyNameCaseInsensitive = true
-});
-
 builder.Services.AddHttpClient();
 
 var app = builder.Build();
