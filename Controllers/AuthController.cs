@@ -3,6 +3,8 @@ using VoteWiselyBackend.Models;
 using VoteWiselyBackend.Contracts;
 using Supabase.Gotrue;
 using VoteWiselyBackend.Services;
+using System.Security.Authentication;
+using Supabase.Gotrue.Exceptions;
 
 namespace VoteWiselyBackend.Controllers
 {
@@ -61,7 +63,18 @@ namespace VoteWiselyBackend.Controllers
 
                 return Ok(new { message = "User logged in successfully" });
             }
-            catch (Exception ex)
+            catch (GotrueException ex)
+            {
+                if(ex.Reason == FailureHint.Reason.UserBadLogin)
+                {
+                    return StatusCode(400, "Invalid login credentials");
+                }
+                else
+                {
+                    return StatusCode(400, "Email not yet confirmed");
+                }
+            }
+            catch (Exception)
             {
                 return StatusCode(500, "An error occurred during login");
             }
