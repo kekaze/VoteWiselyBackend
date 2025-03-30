@@ -17,7 +17,7 @@ namespace VoteWiselyBackend.Controllers
             _authServices = authServices;
         }
 
-        [HttpPost("signup")]
+        [HttpPost("Signup")]
         public async Task<IActionResult> SignUp([FromBody] SignUpRequest request)
         {
             try
@@ -39,6 +39,31 @@ namespace VoteWiselyBackend.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, "An error occurred during registration");
+            }
+        }
+
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        {
+            try
+            {
+                bool validRequest = _authServices.ValidateAuthCredentials(request);
+                if (!validRequest)
+                {
+                    return BadRequest("Something's wrong with your request");
+                }
+
+                var session = await _authServices.SignInUser(request);
+                if (session == null)
+                {
+                    return BadRequest("Invalid credentials");
+                }
+
+                return Ok(new { message = "User logged in successfully" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred during login");
             }
         }
     }
