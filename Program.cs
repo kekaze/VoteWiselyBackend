@@ -28,7 +28,7 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod();
         });
 });
-
+builder.Services.AddScoped<AuthServices>();
 builder.Services.AddSingleton<ISupabaseClientFactory, SupabaseClientFactory>();
 await builder.Services.AddSupabaseClientAsync();
 builder.Services.AddScoped<SupabaseServices>();
