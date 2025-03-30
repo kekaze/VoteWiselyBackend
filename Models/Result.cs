@@ -1,6 +1,6 @@
-﻿using Supabase.Postgrest.Attributes;
+﻿using Newtonsoft.Json;
+using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
-using System.Text.Json.Serialization;
 
 namespace VoteWiselyBackend.Models
 {
@@ -20,5 +20,14 @@ namespace VoteWiselyBackend.Models
         public string? PoliticalParty { get; set; }
         [Column("type")]
         public string? Type { get; set; }
+    }
+
+    public class Candidate
+    {
+        [JsonProperty("candidate_name")]
+        public string CandidateName { get; set; }
+        [JsonProperty("political_party")]
+        public string PoliticalParty { get; set; }
+        public float Score { get; set; }
     }
 }

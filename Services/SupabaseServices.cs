@@ -26,15 +26,14 @@ namespace VoteWiselyBackend.Services
             }
         }
 
-        //public async Task<string?> GetResult(Guid refId)
-        //{
-        //    var result = await _supabaseClient
-        //        .From<Result>()
-        //        .Select(x => new object[] { x.ResultString })
-        //        .Where(x => x.Reference == refId)
-        //        .Get();
-            
-        //    return result.Model.ResultString;
-        //}
+        public async Task<string?> GetResult(Guid referenceId)
+        {
+            var queryResponse = await _supabaseClient
+                .From<Result>()
+                .Select(x => new object[] { x.CandidateName, x.PoliticalParty, x.Score })
+                .Where(x => x.Reference == referenceId)
+                .Get();
+            return queryResponse.Content;
+        }
     }
 }
