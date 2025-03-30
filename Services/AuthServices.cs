@@ -36,5 +36,20 @@ namespace VoteWiselyBackend.Services
 
             return authResponse;
         }
+
+        public bool ValidateAuthCredentials(LoginRequest request)
+        {
+            return !string.IsNullOrEmpty(request.Email) &&
+                   !string.IsNullOrEmpty(request.Password);
+        }
+
+        public async Task<Session?> SignInUser(LoginRequest request)
+        {
+            var authResponse = await _supabaseClient.Auth.SignIn(
+                request.Email,
+                request.Password
+            );
+            return authResponse;
+        }
     }
 }
