@@ -38,6 +38,14 @@ namespace VoteWiselyBackend.Controllers
 
                 return Ok(new { message = "User registered successfully" });
             }
+            catch (GotrueException ex)
+            {
+                if (ex.StatusCode == 422)
+                {
+                    return StatusCode(422, "Password too weak");
+                }
+                return BadRequest("An error occurred during registration");
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, "An error occurred during registration");
