@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Supabase.Gotrue;
 using Supabase.Interfaces;
+using System.Text.RegularExpressions;
 using VoteWiselyBackend.Contracts;
 
 namespace VoteWiselyBackend.Services
@@ -12,12 +13,25 @@ namespace VoteWiselyBackend.Services
         {
             _supabaseClient = supabaseClient;
         }
-        public bool ValidateSignUpRequest(SignUpRequest request)
+        public (bool valid, string? message) ValidateSignUpRequest(SignUpRequest request)
         {
-            return !string.IsNullOrEmpty(request.FullName) &&
-                   !string.IsNullOrEmpty(request.Email) &&
-                   !string.IsNullOrEmpty(request.Password) &&
-                   request.Password == request.ConfirmPassword;
+            if (string.IsNullOrEmpty(request.FullName) || string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
+            {
+                return (false, "All fields are required");
+            }
+            else if (request.Password != request.ConfirmPassword)
+            {
+                return (false, "Passwords do not match");
+            }
+            else if (request.Password.Length < 8)
+            {
+                return (false, "Password must be at least 8 characters long");
+            }
+            else if (!Regex.IsMatch(request.Email, @"^[^\s@]+@[^\s@]+\.[^\s@]+$"))
+            {
+                return (false, "Invalid email address");
+            }
+            return (true, null);
         }
 
         public async Task<Session?> SignUpUser(SignUpRequest request)

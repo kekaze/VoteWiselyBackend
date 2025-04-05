@@ -24,10 +24,10 @@ namespace VoteWiselyBackend.Controllers
         {
             try
             {
-                bool validRequest = _authServices.ValidateSignUpRequest(request);
-                if (!validRequest)
+                var validatedRequest = _authServices.ValidateSignUpRequest(request);
+                if (!validatedRequest.valid)
                 {
-                    return BadRequest("Something's wrong with your request");
+                    return BadRequest(validatedRequest.message);
                 }
 
                 var savedUser = await _authServices.SignUpUser(request);
