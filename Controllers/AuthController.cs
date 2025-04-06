@@ -5,6 +5,9 @@ using Supabase.Gotrue;
 using VoteWiselyBackend.Services;
 using System.Security.Authentication;
 using Supabase.Gotrue.Exceptions;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using OneOf.Types;
 
 namespace VoteWiselyBackend.Controllers
 {
@@ -27,28 +30,33 @@ namespace VoteWiselyBackend.Controllers
                 var validatedRequest = _authServices.ValidateSignUpRequest(request);
                 if (!validatedRequest.valid)
                 {
-                    return BadRequest(validatedRequest.message);
+                    return BadRequest(new { validatedRequest.message });
                 }
 
                 var savedUser = await _authServices.SignUpUser(request);
                 if (savedUser?.User == null)
                 {
-                    return BadRequest("Failed to create user");
+                    return BadRequest(new { message = "Failed to create user" } );
                 }
+
+                HttpContext.Response.Cookies.Append("token", value: savedUser.AccessToken, options: new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.None,
+                    Expires = DateTimeOffset.UtcNow.AddHours(1)
+                });
 
                 return Ok(new { message = "User registered successfully" });
             }
             catch (GotrueException ex)
             {
-                if (ex.StatusCode == 422)
-                {
-                    return StatusCode(422, "Password too weak");
-                }
-                return BadRequest("An error occurred during registration");
+                GoTrueExMessage? exceptionMessage = JsonConvert.DeserializeObject<GoTrueExMessage>(ex.Message);
+                return StatusCode(422, new { message = exceptionMessage?.Msg });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return StatusCode(500, "An error occurred during registration");
+                return StatusCode(500, new { message = "An error occurred during registration" } );
             }
         }
 
