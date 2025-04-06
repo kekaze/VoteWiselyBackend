@@ -47,7 +47,7 @@ namespace VoteWiselyBackend.Controllers
                     Expires = DateTimeOffset.UtcNow.AddHours(1)
                 });
 
-                return Ok(new { message = "User registered successfully" });
+                return Ok();
             }
             catch (GotrueException ex)
             {
