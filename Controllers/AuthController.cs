@@ -39,14 +39,6 @@ namespace VoteWiselyBackend.Controllers
                     return BadRequest(new { message = "Failed to create user" } );
                 }
 
-                HttpContext.Response.Cookies.Append("token", value: savedUser.AccessToken, options: new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.None,
-                    Expires = DateTimeOffset.UtcNow.AddHours(1)
-                });
-
                 return Ok();
             }
             catch (GotrueException ex)
@@ -54,7 +46,7 @@ namespace VoteWiselyBackend.Controllers
                 GoTrueExMessage? exceptionMessage = JsonConvert.DeserializeObject<GoTrueExMessage>(ex.Message);
                 return StatusCode(422, new { message = exceptionMessage?.Msg });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return StatusCode(500, new { message = "An error occurred during registration" } );
             }
@@ -68,14 +60,22 @@ namespace VoteWiselyBackend.Controllers
                 bool validRequest = _authServices.ValidateAuthCredentials(request);
                 if (!validRequest)
                 {
-                    return BadRequest("Something's wrong with your request");
+                    return BadRequest(new { message = "Something's wrong with your request" });
                 }
 
                 var session = await _authServices.SignInUser(request);
                 if (session == null)
                 {
-                    return BadRequest("Invalid credentials");
+                    return BadRequest(new { message = "Invalid credentials" });
                 }
+
+                HttpContext.Response.Cookies.Append("token", value: session.AccessToken, options: new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.None,
+                    Expires = DateTimeOffset.UtcNow.AddHours(1)
+                });
 
                 return Ok(new { message = "User logged in successfully" });
             }
@@ -83,16 +83,16 @@ namespace VoteWiselyBackend.Controllers
             {
                 if(ex.Reason == FailureHint.Reason.UserBadLogin)
                 {
-                    return StatusCode(400, "Invalid login credentials");
+                    return StatusCode(400, new { message = "Invalid login credentials" });
                 }
                 else
                 {
-                    return StatusCode(400, "Email not yet confirmed");
+                    return StatusCode(400, new { message = "Email not yet confirmed" });
                 }
             }
             catch (Exception)
             {
-                return StatusCode(500, "An error occurred during login");
+                return StatusCode(500, new { message = "An error occurred during login" } );
             }
         }
     }
