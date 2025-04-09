@@ -1,13 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using VoteWiselyBackend.Models;
 using VoteWiselyBackend.Contracts;
-using Supabase.Gotrue;
 using VoteWiselyBackend.Services;
-using System.Security.Authentication;
 using Supabase.Gotrue.Exceptions;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
-using OneOf.Types;
 using Microsoft.AspNetCore.Authorization;
 
 namespace VoteWiselyBackend.Controllers
@@ -95,13 +90,6 @@ namespace VoteWiselyBackend.Controllers
             {
                 return StatusCode(500, new { message = "An error occurred during login" } );
             }
-        }
-
-        [Authorize]
-        [HttpGet("CheckAuth")]
-        public IActionResult AuthenticatedOnly()
-        {
-            return Ok("Authenticated");
         }
     }
 }
