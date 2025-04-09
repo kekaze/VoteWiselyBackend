@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 using VoteWiselyBackend.Contracts;
 using VoteWiselyBackend.Services;
 using VoteWiselyBackend.Models;
 using Pinecone;
-
 
 namespace VoteWiselyBackend.Controllers
 {
