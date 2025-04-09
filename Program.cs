@@ -1,11 +1,29 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Pinecone;
-using System.Text.Json;
+using System.Text;
 using VoteWiselyBackend.Extensions;
 using VoteWiselyBackend.Factories.Implementations;
 using VoteWiselyBackend.Factories.Interfaces;
 using VoteWiselyBackend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var supabaseUrl = Environment.GetEnvironmentVariable("SUPABASE_URL");
+var supabaseSigningKey = Environment.GetEnvironmentVariable("SUPABASE_SIGNING_KEY");
+var pineconeApiKey = Environment.GetEnvironmentVariable("PINECONE_API_KEY");
+var pineconeHost = Environment.GetEnvironmentVariable("PINECONE_INDEX_HOST");
+var originUrl = Environment.GetEnvironmentVariable("ORIGIN_URL");
+
+if (string.IsNullOrEmpty(supabaseUrl) ||
+    string.IsNullOrEmpty(supabaseSigningKey) ||
+    string.IsNullOrEmpty(pineconeApiKey) ||
+    string.IsNullOrEmpty(pineconeHost) ||
+    string.IsNullOrEmpty(originUrl)
+)
+{
+    throw new InvalidOperationException("An environment variable is not configured yet.");
+};
 
 // Add services to the container.
 
@@ -20,29 +38,58 @@ builder.Services.AddCors(options =>
         name: "Policy-1",
         policy =>
         {
-            policy.WithOrigins(
-                "http://localhost:8080"
-            )
-            .AllowCredentials()
-            .AllowAnyHeader()
-            .AllowAnyMethod();
+            policy.WithOrigins(originUrl)
+                .AllowCredentials()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
         });
 });
-builder.Services.AddScoped<AuthServices>();
 builder.Services.AddSingleton<ISupabaseClientFactory, SupabaseClientFactory>();
 await builder.Services.AddSupabaseClientAsync();
-builder.Services.AddScoped<SupabaseServices>();
 
 builder.Services.AddSingleton(sp =>
 {
-    string pineconeKey = Environment.GetEnvironmentVariable("PINECONE_API_KEY");
-    string indexHost = Environment.GetEnvironmentVariable("PINECONE_INDEX_HOST");
-    PineconeClient pineconeClient = new PineconeClient(pineconeKey);
-    return new PineconeServices(pineconeClient, indexHost);
+    PineconeClient pineconeClient = new PineconeClient(pineconeApiKey!);
+    return new PineconeServices(pineconeClient, pineconeHost!);
 });
+
+builder.Services.AddScoped<SupabaseServices>();
+builder.Services.AddScoped<AuthServices>();
 
 builder.Services.AddHttpClient();
 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            context.Token = context.Request.Cookies["AccessToken"];
+            return Task.CompletedTask;
+        }
+    };
+
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidIssuer = $"{supabaseUrl}/auth/v1",
+        ValidateAudience = true,
+        ValidAudience = "authenticated",
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(supabaseSigningKey!)
+        ),
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero
+    };
+});
+
+builder.Services.AddAuthorization();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -55,7 +102,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors("Policy-1");
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

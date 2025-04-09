@@ -19,7 +19,9 @@
         "SUPABASE_URL": "https://mjyepfcpqsajhxxpwdzw.supabase.co",
         "SUPABASE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1qeWVwZmNwcXNhamh4eHB3ZHp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAwNTYxMTgsImV4cCI6MjA1NTYzMjExOH0.9Zd8I-ItmrjCxkOaTsOemP2n9s3gKRIl61iAUgtpTKw",
         "PINECONE_API_KEY": "pcsk_6ABcsR_LJUvXxrssgHMiEdHNWp4oQcpg2BaBp7M9L8ibNEVhwmYwwb1Ru3EwhLWQRH8CeP",
-        "PINECONE_INDEX_HOST": "https://ph-candidates-mvwvv38.svc.aped-4627-b74a.pinecone.io"
+        "PINECONE_INDEX_HOST": "https://ph-candidates-mvwvv38.svc.aped-4627-b74a.pinecone.io",
+        "SUPABASE_SIGNING_KEY": "M09R9BwzUpI0zP82DvRX6gaPAbP/QZ0/u9xGMKFeyQYZLEOAf+S39AF5AMLzvp+cDcuTtUZ1T03O5lD0/vgX3g==",
+        "ORIGIN_URL": "http://localhost:8080"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7017;http://localhost:5293"
