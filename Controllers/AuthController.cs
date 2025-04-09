@@ -8,6 +8,7 @@ using Supabase.Gotrue.Exceptions;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using OneOf.Types;
+using Microsoft.AspNetCore.Authorization;
 
 namespace VoteWiselyBackend.Controllers
 {
@@ -69,7 +70,7 @@ namespace VoteWiselyBackend.Controllers
                     return BadRequest(new { message = "Invalid credentials" });
                 }
 
-                HttpContext.Response.Cookies.Append("token", value: session.AccessToken, options: new CookieOptions
+                HttpContext.Response.Cookies.Append("AccessToken", value: session.AccessToken, options: new CookieOptions
                 {
                     HttpOnly = true,
                     Secure = true,
@@ -94,6 +95,13 @@ namespace VoteWiselyBackend.Controllers
             {
                 return StatusCode(500, new { message = "An error occurred during login" } );
             }
+        }
+
+        [Authorize]
+        [HttpGet("CheckAuth")]
+        public IActionResult AuthenticatedOnly()
+        {
+            return Ok("Authenticated");
         }
     }
 }
