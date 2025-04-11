@@ -26,44 +26,31 @@ namespace VoteWiselyBackend.Controllers
         [HttpPost("similarity-search")]
         public async Task<IActionResult> PerformSimilaritySearch([FromBody] PoliticalStance candidateCriteria)
         {
-            string criteria = DataTransformationServices.PrepareString(candidateCriteria);
-            var similarCandidates = new QueryResponse();
-            var resultVectorSearch = new List<ScoredVector>();
             var resultModel = new List<Result>();
             uint maxSentorialWinners = 12;
 
-            EmbeddingResponse responseJson = await _dataTransformationServices.EmbedCriteria(criteria);
-
-            // Perform similarity search
-            if (responseJson != null)
-            {
-                similarCandidates = await _pineconeService.QueryIndexAsync(responseJson.Embedding, maxSentorialWinners);
-            }
-
-            // save the result and the selected candidate criteria to Supabase
-            if (similarCandidates.Matches != null)
-            {
-                resultVectorSearch = similarCandidates.Matches.ToList();
-            }
+            string criteria = DataTransformationServices.PrepareString(candidateCriteria);
+            EmbeddingResponse transformedCriteria = await _dataTransformationServices.EmbedCriteria(criteria);
+            List<ScoredVector> recommendedCandidates = await _pineconeService.QueryIndexAsync(transformedCriteria.Embedding, maxSentorialWinners);
 
             Guid resultReference = Guid.NewGuid();
-            foreach (var result in resultVectorSearch)
+            foreach (var candidate in recommendedCandidates)
             {
-                if (result.Metadata != null)
+                if (candidate.Metadata != null)
                 {
                     resultModel.Add(
                         new Result
                         {
                             Reference = resultReference,
-                            Score = (float)result.Score,
-                            CandidateName = $"#{result.Metadata["ballot_number"].Value} {result.Metadata["name"].Value}",
-                            PoliticalParty = (string)result.Metadata["political_party"].Value,
+                            Score = (float)candidate.Score,
+                            CandidateName = $"#{candidate.Metadata["ballot_number"].Value} {candidate.Metadata["name"].Value}",
+                            PoliticalParty = (string)candidate.Metadata["political_party"].Value,
                             Type = "admin_event"
                         }
                     );
                 }
             }
-            var saveResponse = await _supabaseServices.SaveResults(resultModel);
+            //var saveResponse = await _supabaseServices.SaveResults(resultModel);
 
             // handle exception errors
             return Ok();

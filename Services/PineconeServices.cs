@@ -14,7 +14,7 @@ namespace VoteWiselyBackend.Services
             _indexHost = indexHost;
         }
 
-        public async Task<QueryResponse> QueryIndexAsync(float[] queryVector, uint topK = 5)
+        public async Task<List<ScoredVector>> QueryIndexAsync(float[] queryVector, uint topK = 5)
         {
             var index = _pineconeClient.Index(host: _indexHost);
             var queryRequest = new QueryRequest
@@ -24,7 +24,9 @@ namespace VoteWiselyBackend.Services
                 IncludeMetadata = true,
                 Namespace = "senators_2025"
             };
-            return await index.QueryAsync(queryRequest);
+
+            var queryResponse = await index.QueryAsync(queryRequest);
+            return queryResponse.Matches.ToList();
         }
 
     }
