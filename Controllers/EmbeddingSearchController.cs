@@ -14,11 +14,13 @@ namespace VoteWiselyBackend.Controllers
         private readonly HttpClient _httpClient;
         private readonly PineconeServices _pineconeService;
         private readonly SupabaseServices _supabaseServices;
-        public EmbeddingSearchController(HttpClient httpClient, PineconeServices pineconeService, SupabaseServices supabaseServices)
+        private readonly DataTransformationServices _dataTransformationServices;
+        public EmbeddingSearchController(HttpClient httpClient, PineconeServices pineconeService, SupabaseServices supabaseServices, DataTransformationServices dataTransformationServices)
         {
             _httpClient = httpClient;
             _pineconeService = pineconeService;
             _supabaseServices = supabaseServices;
+            _dataTransformationServices = dataTransformationServices;
         }
 
         [HttpPost("similarity-search")]
@@ -30,9 +32,7 @@ namespace VoteWiselyBackend.Controllers
             var resultModel = new List<Result>();
             uint maxSentorialWinners = 12;
 
-            // Vectorize the text
-            var response = await _httpClient.PostAsJsonAsync("http://127.0.0.1:8000/embed", new { criteria });
-            var responseJson = await response.Content.ReadFromJsonAsync<EmbeddingResponse>();
+            EmbeddingResponse responseJson = await _dataTransformationServices.EmbedCriteria(criteria);
 
             // Perform similarity search
             if (responseJson != null)

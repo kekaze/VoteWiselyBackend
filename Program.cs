@@ -55,6 +55,7 @@ builder.Services.AddSingleton(sp =>
 
 builder.Services.AddScoped<SupabaseServices>();
 builder.Services.AddScoped<AuthServices>();
+builder.Services.AddScoped<DataTransformationServices>();
 
 builder.Services.AddHttpClient();
 
