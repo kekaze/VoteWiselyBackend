@@ -91,5 +91,12 @@ namespace VoteWiselyBackend.Controllers
                 return StatusCode(500, new { message = "An error occurred during login" } );
             }
         }
+
+        [Authorize]
+        [HttpGet("CheckAuth")]
+        public IActionResult CheckAuth()
+        {
+            return Ok(new { message = "User is authenticated" });
+        }
     }
 }
