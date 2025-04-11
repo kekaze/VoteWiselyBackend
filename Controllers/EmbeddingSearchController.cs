@@ -42,9 +42,9 @@ namespace VoteWiselyBackend.Controllers
                         new Result
                         {
                             Reference = resultReference,
-                            Score = (float)candidate.Score,
-                            CandidateName = $"#{candidate.Metadata["ballot_number"].Value} {candidate.Metadata["name"].Value}",
-                            PoliticalParty = (string)candidate.Metadata["political_party"].Value,
+                            Score = (float)candidate.Score!,
+                            CandidateName = $"#{candidate.Metadata["ballot_number"]!.Value} {candidate.Metadata["name"]!.Value}",
+                            PoliticalParty = (string)candidate.Metadata["political_party"]!.Value,
                             Type = "admin_event"
                         }
                     );
