@@ -33,7 +33,7 @@ namespace VoteWiselyBackend.Controllers
             EmbeddingResponse transformedCriteria = await _dataTransformationServices.EmbedCriteria(criteria);
             List<ScoredVector> recommendedCandidates = await _pineconeService.QueryIndexAsync(transformedCriteria.Embedding, maxSentorialWinners);
 
-            Guid resultReference = Guid.NewGuid();
+            Guid resultReference = InfrastructureService.GetGuid();
             foreach (var candidate in recommendedCandidates)
             {
                 if (candidate.Metadata != null)
