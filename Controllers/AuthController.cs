@@ -65,7 +65,15 @@ namespace VoteWiselyBackend.Controllers
                     return BadRequest(new { message = "Invalid credentials" });
                 }
 
-                HttpContext.Response.Cookies.Append("AccessToken", value: session.AccessToken, options: new CookieOptions
+                HttpContext.Response.Cookies.Append("AccessToken", value: session.AccessToken!, options: new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.None,
+                    Expires = DateTimeOffset.UtcNow.AddHours(1)
+                });
+
+                HttpContext.Response.Cookies.Append("RefreshToken", value: session.RefreshToken!, options: new CookieOptions
                 {
                     HttpOnly = true,
                     Secure = true,

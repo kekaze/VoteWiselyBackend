@@ -3,6 +3,9 @@ using VoteWiselyBackend.Contracts;
 using VoteWiselyBackend.Services;
 using VoteWiselyBackend.Models;
 using Pinecone;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Supabase.Gotrue;
 
 namespace VoteWiselyBackend.Controllers
 {
@@ -23,9 +26,13 @@ namespace VoteWiselyBackend.Controllers
             _dataTransformationServices = dataTransformationServices;
         }
 
+        [Authorize]
         [HttpPost("similarity-search")]
         public async Task<IActionResult> PerformSimilaritySearch([FromBody] PoliticalStance candidateCriteria)
         {
+            var cookies = Request.Cookies;
+            await _supabaseServices.SetSession(cookies);
+
             var resultModel = new List<Result>();
             uint maxSentorialWinners = 12;
 
@@ -50,9 +57,9 @@ namespace VoteWiselyBackend.Controllers
                     );
                 }
             }
-            //var saveResponse = await _supabaseServices.SaveResults(resultModel);
+            var saveResponse = await _supabaseServices.SaveResults(resultModel);
 
-            // handle exception errors
+            // TODO: handle exception errors
             return Ok();
         }
     }

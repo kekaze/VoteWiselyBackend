@@ -3,6 +3,8 @@ using System.Text.Json;
 using VoteWiselyBackend.Contracts;
 using VoteWiselyBackend.Models;
 using System.Diagnostics;
+using Supabase.Gotrue;
+using System.Threading.Tasks;
 
 namespace VoteWiselyBackend.Services
 {
@@ -34,6 +36,11 @@ namespace VoteWiselyBackend.Services
                 .Where(x => x.Reference == referenceId)
                 .Get();
             return queryResponse.Content;
+        }
+
+        public async Task SetSession(IRequestCookieCollection cookies)
+        {
+            await _supabaseClient.Auth.SetSession(cookies["AccessToken"]!, cookies["RefreshToken"]!);
         }
     }
 }
