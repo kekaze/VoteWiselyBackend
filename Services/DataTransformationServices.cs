@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Newtonsoft.Json;
+using Pinecone;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using VoteWiselyBackend.Contracts;
 using VoteWiselyBackend.Extensions;
+using VoteWiselyBackend.Models;
 
 namespace VoteWiselyBackend.Services
 {
@@ -65,6 +67,29 @@ namespace VoteWiselyBackend.Services
             {
                 throw new Exception("An error occurred while embedding criteria.", ex);
             }
+        }
+
+        public static List<Result> CreateResultModel(List<ScoredVector> recommendedCandidates)
+        {
+            Guid resultReference = InfrastructureService.GetGuid();
+            var resultModel = new List<Result>();
+            foreach (var candidate in recommendedCandidates)
+            {
+                if (candidate.Metadata != null)
+                {
+                    resultModel.Add(
+                        new Result
+                        {
+                            Reference = resultReference,
+                            Score = (float)candidate.Score!,
+                            CandidateName = $"#{candidate.Metadata["ballot_number"]!.Value} {candidate.Metadata["name"]!.Value}",
+                            PoliticalParty = (string)candidate.Metadata["political_party"]!.Value,
+                            Type = "admin_event"
+                        }
+                    );
+                }
+            }
+            return resultModel;
         }
     }
 }
