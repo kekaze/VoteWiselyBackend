@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VoteWiselyBackend.Contracts;
 using VoteWiselyBackend.Services;
-using VoteWiselyBackend.Models;
 using Pinecone;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
-using Supabase.Gotrue;
 
 namespace VoteWiselyBackend.Controllers
 {

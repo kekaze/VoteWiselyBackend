@@ -1,10 +1,5 @@
 ﻿using Supabase.Postgrest.Responses;
-using System.Text.Json;
-using VoteWiselyBackend.Contracts;
 using VoteWiselyBackend.Models;
-using System.Diagnostics;
-using Supabase.Gotrue;
-using System.Threading.Tasks;
 
 namespace VoteWiselyBackend.Services
 {

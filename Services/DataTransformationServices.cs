@@ -1,9 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Newtonsoft.Json;
-using Pinecone;
-using System.Net.Http;
-using System.Runtime.CompilerServices;
-using System.Text.Json;
+﻿using Pinecone;
 using VoteWiselyBackend.Contracts;
 using VoteWiselyBackend.Extensions;
 using VoteWiselyBackend.Models;
