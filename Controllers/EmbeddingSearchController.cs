@@ -30,37 +30,44 @@ namespace VoteWiselyBackend.Controllers
         [HttpPost("similarity-search")]
         public async Task<IActionResult> PerformSimilaritySearch([FromBody] PoliticalStance candidateCriteria)
         {
-            var cookies = Request.Cookies;
-            await _supabaseServices.SetSession(cookies);
-
-            var resultModel = new List<Result>();
-            uint maxSentorialWinners = 12;
-
-            string criteria = DataTransformationServices.PrepareString(candidateCriteria);
-            EmbeddingResponse transformedCriteria = await _dataTransformationServices.EmbedCriteria(criteria);
-            List<ScoredVector> recommendedCandidates = await _pineconeService.QueryIndexAsync(transformedCriteria.Embedding, maxSentorialWinners);
-
-            Guid resultReference = InfrastructureService.GetGuid();
-            foreach (var candidate in recommendedCandidates)
+            try
             {
-                if (candidate.Metadata != null)
-                {
-                    resultModel.Add(
-                        new Result
-                        {
-                            Reference = resultReference,
-                            Score = (float)candidate.Score!,
-                            CandidateName = $"#{candidate.Metadata["ballot_number"]!.Value} {candidate.Metadata["name"]!.Value}",
-                            PoliticalParty = (string)candidate.Metadata["political_party"]!.Value,
-                            Type = "admin_event"
-                        }
-                    );
-                }
-            }
-            var saveResponse = await _supabaseServices.SaveResults(resultModel);
+                var cookies = Request.Cookies;
+                await _supabaseServices.SetSession(cookies);
 
-            // TODO: handle exception errors
-            return Ok();
+                var resultModel = new List<Result>();
+                uint maxSentorialWinners = 12;
+
+                string criteria = DataTransformationServices.PrepareString(candidateCriteria);
+                EmbeddingResponse transformedCriteria = await _dataTransformationServices.EmbedCriteria(criteria);
+                List<ScoredVector> recommendedCandidates = await _pineconeService.QueryIndexAsync(transformedCriteria.Embedding, maxSentorialWinners);
+
+                Guid resultReference = InfrastructureService.GetGuid();
+                foreach (var candidate in recommendedCandidates)
+                {
+                    if (candidate.Metadata != null)
+                    {
+                        resultModel.Add(
+                            new Result
+                            {
+                                Reference = resultReference,
+                                Score = (float)candidate.Score!,
+                                CandidateName = $"#{candidate.Metadata["ballot_number"]!.Value} {candidate.Metadata["name"]!.Value}",
+                                PoliticalParty = (string)candidate.Metadata["political_party"]!.Value,
+                                Type = "admin_event"
+                            }
+                        );
+                    }
+                }
+                var saveResponse = await _supabaseServices.SaveResults(resultModel);
+
+                // TODO: handle exception errors
+                return Ok(new { reference = saveResponse.Model!.Reference, result = saveResponse.Content });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { message = "Server Error" });
+            }
         }
     }
 }
