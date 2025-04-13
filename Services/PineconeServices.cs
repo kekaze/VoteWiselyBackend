@@ -16,17 +16,24 @@ namespace VoteWiselyBackend.Services
 
         public async Task<List<ScoredVector>> QueryIndexAsync(float[] queryVector, uint topK = 5)
         {
-            var index = _pineconeClient.Index(host: _indexHost);
-            var queryRequest = new QueryRequest
+            try
             {
-                Vector = queryVector,
-                TopK = topK,
-                IncludeMetadata = true,
-                Namespace = "senators_2025"
-            };
+                var index = _pineconeClient.Index(host: _indexHost);
+                var queryRequest = new QueryRequest
+                {
+                    Vector = queryVector,
+                    TopK = topK,
+                    IncludeMetadata = true,
+                    Namespace = "senators_2025"
+                };
 
-            var queryResponse = await index.QueryAsync(queryRequest);
-            return queryResponse.Matches.ToList();
+                var queryResponse = await index.QueryAsync(queryRequest);
+                return queryResponse.Matches!.ToList();
+            }
+            catch
+            {
+                throw new Exception("Failed to query the index");
+            }
         }
 
     }

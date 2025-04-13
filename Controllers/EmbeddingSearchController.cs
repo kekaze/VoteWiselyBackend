@@ -61,12 +61,11 @@ namespace VoteWiselyBackend.Controllers
                 }
                 var saveResponse = await _supabaseServices.SaveResults(resultModel);
 
-                // TODO: handle exception errors
                 return Ok(new { reference = saveResponse.Model!.Reference, result = saveResponse.Content });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Server Error" });
+                return StatusCode(500, new { message = ex.Message });
             }
         }
     }
