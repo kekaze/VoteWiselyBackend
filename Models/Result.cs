@@ -21,13 +21,4 @@ namespace VoteWiselyBackend.Models
         [Column("type")]
         public string? Type { get; set; }
     }
-
-    public class Candidate
-    {
-        [JsonProperty("candidate_name")]
-        public string CandidateName { get; set; }
-        [JsonProperty("political_party")]
-        public string PoliticalParty { get; set; }
-        public float Score { get; set; }
-    }
 }
