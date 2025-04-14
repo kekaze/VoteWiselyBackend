@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
+using VoteWiselyBackend.Contracts;
 
 namespace VoteWiselyBackend.Models
 {
@@ -12,13 +13,18 @@ namespace VoteWiselyBackend.Models
         public int Id { get; set; }
         [Column("reference")]
         public Guid Reference { get; set; }
-        [Column("score")]
-        public float Score { get; set; }
-        [Column("candidate_name")]
-        public string? CandidateName { get; set; }
-        [Column("political_party")]
-        public string? PoliticalParty { get; set; }
+        [Column("criteria")]
+        public PoliticalStance Criteria { get; set; }
+        [Column("recommendation")]
+        public List<Recommendation> Recommendation { get; set; }
         [Column("type")]
         public string? Type { get; set; }
+    }
+
+    public class Recommendation
+    {
+        public string CandidateName { get; set; } = string.Empty;
+        public float Score { get; set; }
+        public string PoliticalParty { get; set; } = string.Empty;
     }
 }
