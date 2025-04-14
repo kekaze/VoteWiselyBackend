@@ -5,7 +5,7 @@ using VoteWiselyBackend.Contracts;
 
 namespace VoteWiselyBackend.Models
 {
-    [Table("phelection_results")]
+    [Table("recommendations")]
     public class Result : BaseModel
     {
         [PrimaryKey("id")]

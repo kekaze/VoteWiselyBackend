@@ -17,10 +17,10 @@ namespace VoteWiselyBackend.Controllers
             _supabaseServices = supabaseService;
         }
 
-        [HttpGet("{resultReferenceId}")]
-        public async Task<ActionResult> GetResult(Guid resultReferenceId)
+        [HttpGet("{referenceId}")]
+        public async Task<ActionResult> GetResult(Guid referenceId)
         {
-            string? result = await _supabaseServices.GetResult(resultReferenceId);
+            string? result = await _supabaseServices.GetRecommendation(referenceId);
             if (result == null)
             {
                 return NotFound();

@@ -23,12 +23,13 @@ namespace VoteWiselyBackend.Services
             }
         }
 
-        public async Task<string?> GetResult(Guid referenceId)
+        public async Task<string?> GetRecommendation(Guid referenceId)
         {
             var queryResponse = await _supabaseClient
                 .From<Result>()
-                .Select(x => new object[] { x.Id, x.CandidateName, x.PoliticalParty, x.Score })
+                .Select(x => new object[] { x.Id, x.Criteria, x.Recommendation })
                 .Where(x => x.Reference == referenceId)
+                .Limit(1)
                 .Get();
             return queryResponse.Content;
         }
