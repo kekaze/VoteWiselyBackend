@@ -38,8 +38,8 @@ namespace VoteWiselyBackend.Controllers
                 EmbeddingResponse transformedCriteria = await _dataTransformationServices.EmbedCriteria(criteria);
                 List<ScoredVector> recommendedCandidates = await _pineconeService.QueryIndexAsync(transformedCriteria.Embedding, maxSentorialWinners);
 
-                var resultModel = DataTransformationServices.CreateResultModel(recommendedCandidates);
-                var saveResponse = await _supabaseServices.SaveResults(resultModel);
+                var resultModel = DataTransformationServices.CreateResultModel(recommendedCandidates, candidateCriteria);
+                var saveResponse = await _supabaseServices.SaveRecommendation(resultModel);
 
                 return Ok(new { reference = saveResponse.Model!.Reference, result = saveResponse.Content });
             }

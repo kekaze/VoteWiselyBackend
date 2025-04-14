@@ -10,7 +10,7 @@ namespace VoteWiselyBackend.Services
         {
             _supabaseClient = supabaseClient;
         }
-        public async Task<ModeledResponse<Result>> SaveResults(List<Result> resultModel)
+        public async Task<ModeledResponse<Result>> SaveRecommendation(Result resultModel)
         {
             try
             {

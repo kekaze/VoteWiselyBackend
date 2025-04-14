@@ -64,27 +64,34 @@ namespace VoteWiselyBackend.Services
             }
         }
 
-        public static List<Result> CreateResultModel(List<ScoredVector> recommendedCandidates)
+        public static Result CreateResultModel(List<ScoredVector> recommendedCandidates, PoliticalStance candidateCriteria)
         {
             Guid resultReference = InfrastructureService.GetGuid();
-            var resultModel = new List<Result>();
+            var resultModel = new Result
+            {
+                Reference = resultReference,
+                Criteria = candidateCriteria,
+                Recommendation = FormatRecommendation(recommendedCandidates),
+                Type = "ph_elections"
+            };
+            
+            return resultModel;
+        }
+
+        public static List<Recommendation> FormatRecommendation(List<ScoredVector> recommendedCandidates)
+        {
+            var recommendations = new List<Recommendation>();
             foreach (var candidate in recommendedCandidates)
             {
-                if (candidate.Metadata != null)
+                var recommendation = new Recommendation
                 {
-                    resultModel.Add(
-                        new Result
-                        {
-                            Reference = resultReference,
-                            Score = (float)candidate.Score!,
-                            CandidateName = $"#{candidate.Metadata["ballot_number"]!.Value} {candidate.Metadata["name"]!.Value}",
-                            PoliticalParty = (string)candidate.Metadata["political_party"]!.Value,
-                            Type = "admin_event"
-                        }
-                    );
-                }
+                    CandidateName = $"#{candidate.Metadata["ballot_number"]!.Value} {candidate.Metadata["name"]!.Value}",
+                    Score = (float)candidate.Score!,
+                    PoliticalParty = (string)candidate.Metadata["political_party"]!.Value
+                };
+                recommendations.Add(recommendation);
             }
-            return resultModel;
+            return recommendations;
         }
     }
 }
