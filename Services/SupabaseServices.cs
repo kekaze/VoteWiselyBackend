@@ -27,7 +27,7 @@ namespace VoteWiselyBackend.Services
         {
             var queryResponse = await _supabaseClient
                 .From<Result>()
-                .Select(x => new object[] { x.CandidateName, x.PoliticalParty, x.Score })
+                .Select(x => new object[] { x.Id, x.CandidateName, x.PoliticalParty, x.Score })
                 .Where(x => x.Reference == referenceId)
                 .Get();
             return queryResponse.Content;

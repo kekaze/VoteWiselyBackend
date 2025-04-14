@@ -17,16 +17,15 @@ namespace VoteWiselyBackend.Controllers
             _supabaseServices = supabaseService;
         }
 
-        [HttpPost("GetResult")]
-        public async Task<List<Candidate>> GetResult([FromBody] GuidRequest request)
+        [HttpGet("{resultReferenceId}")]
+        public async Task<ActionResult> GetResult(Guid resultReferenceId)
         {
-            string? result = await _supabaseServices.GetResult(request.Reference);
-            List<Candidate>? candidates = JsonConvert.DeserializeObject<List<Candidate>>(result);
+            string? result = await _supabaseServices.GetResult(resultReferenceId);
             if (result == null)
             {
-                return new List<Candidate>();
+                return NotFound();
             }
-            return candidates;
+            return Ok(result);
         }
     }
 }
