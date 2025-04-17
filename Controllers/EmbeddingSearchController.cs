@@ -34,7 +34,7 @@ namespace VoteWiselyBackend.Controllers
 
                 uint maxSentorialWinners = 12;
 
-                string criteria = DataTransformationServices.PrepareString(candidateCriteria);
+                string criteria = DataTransformationServices.CreateParagraph(candidateCriteria);
                 EmbeddingResponse transformedCriteria = await _dataTransformationServices.EmbedCriteria(criteria);
                 List<ScoredVector> recommendedCandidates = await _pineconeService.QueryIndexAsync(transformedCriteria.Embedding, maxSentorialWinners);
 

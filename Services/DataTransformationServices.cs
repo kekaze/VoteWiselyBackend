@@ -12,24 +12,24 @@ namespace VoteWiselyBackend.Services
         {
             _httpClient = httpClient;
         }
-        public static string PrepareString(PoliticalStance PoliticalCriteriaTitleAndValuePair)
+        public static string CreateParagraph(PoliticalStance politicalCriteria)
         {
             var labelMap = new Dictionary<string, string>
             {
-                { "InFavor", "In favor to" },
-                { "Against", "Against" },
-                { "Platforms", "Political Platform" },
-                { "WithReservations", "With reservations to"  }
+                { "InFavor", "should be in favor of" },
+                { "Against", "should be against" },
+                { "Platforms", "should prioritize the following platform/s:" },
+                { "WithReservations", "may have reservations on" }
             };
 
-            var sections = new List<string>();
+            var sentences = new List<string>();
 
             foreach (var prop in typeof(PoliticalStance).GetProperties())
             {
-                // It is necessary to make sure that we are working with a list of strings for the below logic to work
+                // Ensure we are working with a list of strings
                 if (prop.PropertyType.IsListOfType(typeof(string)))
                 {
-                    var collection = prop.GetValue(PoliticalCriteriaTitleAndValuePair) as IEnumerable<string>;
+                    var collection = prop.GetValue(politicalCriteria) as IEnumerable<string>;
 
                     if (collection?.Any() == true)
                     {
@@ -37,11 +37,14 @@ namespace VoteWiselyBackend.Services
                             ? displayLabel
                             : prop.Name;
 
-                        sections.Add($"{label}: {string.Join(", ", collection)}");
+                        string formattedCollection = string.Join(", ", collection.Take(collection.Count() - 1)) +
+                                                     (collection.Count() > 1 ? $", and {collection.Last()}" : collection.First());
+                        sentences.Add($"The political candidate and/or party {label} {formattedCollection}.");
                     }
                 }
             }
-            return string.Join("\n", sections);
+
+            return string.Join(" ", sentences);
         }
 
         public async Task<EmbeddingResponse> EmbedCriteria(string criteria)
