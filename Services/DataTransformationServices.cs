@@ -18,8 +18,8 @@ namespace VoteWiselyBackend.Services
             {
                 { "InFavor", "In favor to" },
                 { "Against", "Against" },
-                { "Platforms", "Political Platform" }
-                // To add other properties in the future
+                { "Platforms", "Political Platform" },
+                { "WithReservations", "With reservations to"  }
             };
 
             var sections = new List<string>();

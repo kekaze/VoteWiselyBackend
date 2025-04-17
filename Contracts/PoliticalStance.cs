@@ -10,5 +10,7 @@ namespace VoteWiselyBackend.Contracts
         public List<string> Against { get; set; } = new List<string>();
 
         public List<string> Platforms { get; set; } = new List<string>();
+        [JsonPropertyName("with_reservations")]
+        public List<string> WithReservations { get; set; } = new List<string>();
     }
 }
