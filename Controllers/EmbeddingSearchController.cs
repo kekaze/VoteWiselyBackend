@@ -32,11 +32,9 @@ namespace VoteWiselyBackend.Controllers
                 var cookies = Request.Cookies;
                 await _supabaseServices.SetSession(cookies);
 
-                uint maxSentorialWinners = 12;
-
                 string criteriaParagraph = DataTransformationServices.CreateParagraph(candidateCriteria);
                 EmbeddingResponse transformedCriteria = await _dataTransformationServices.EmbedCriteria(criteriaParagraph);
-                List<ScoredVector> recommendedCandidates = await _pineconeService.QueryIndexAsync(transformedCriteria.Embedding, maxSentorialWinners);
+                List<ScoredVector> recommendedCandidates = await _pineconeService.QueryIndexAsync(transformedCriteria.Embedding, candidateCriteria);
 
                 var resultModel = DataTransformationServices.CreateResultModel(recommendedCandidates, candidateCriteria);
                 var saveResponse = await _supabaseServices.SaveRecommendation(resultModel);

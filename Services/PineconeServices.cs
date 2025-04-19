@@ -14,17 +14,23 @@ namespace VoteWiselyBackend.Services
             _indexHost = indexHost;
         }
 
-        public async Task<List<ScoredVector>> QueryIndexAsync(float[] queryVector, uint topK = 5)
+        public async Task<List<ScoredVector>> QueryIndexAsync(float[] queryVector, CandidateCriteria candidateCriteria)
         {
             try
             {
+                uint maxSentorialWinners = 12;
                 var index = _pineconeClient.Index(host: _indexHost);
                 var queryRequest = new QueryRequest
                 {
                     Vector = queryVector,
-                    TopK = topK,
+                    TopK = maxSentorialWinners,
                     IncludeMetadata = true,
-                    Namespace = "senatorial_candidates_2025"
+                    Namespace = "senatorial_candidates_2025",
+                    Filter = new Metadata
+                    {
+                        ["not_political_dynasty"] = candidateCriteria.NotPoliticalDynasty,
+                        ["no_criminal_records"] = candidateCriteria.NoCriminalRecords
+                    }
                 };
 
                 var queryResponse = await index.QueryAsync(queryRequest);
