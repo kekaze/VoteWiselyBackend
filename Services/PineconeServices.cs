@@ -24,7 +24,7 @@ namespace VoteWiselyBackend.Services
                     Vector = queryVector,
                     TopK = topK,
                     IncludeMetadata = true,
-                    Namespace = "senators_2025"
+                    Namespace = "senatorial_candidates_2025"
                 };
 
                 var queryResponse = await index.QueryAsync(queryRequest);
