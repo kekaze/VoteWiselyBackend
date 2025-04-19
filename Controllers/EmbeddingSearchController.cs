@@ -25,7 +25,7 @@ namespace VoteWiselyBackend.Controllers
 
         [Authorize]
         [HttpPost("CandidateSearch")]
-        public async Task<IActionResult> PerformSimilaritySearch([FromBody] PoliticalStance candidateCriteria)
+        public async Task<IActionResult> PerformSimilaritySearch([FromBody] CandidateCriteria candidateCriteria)
         {
             try
             {

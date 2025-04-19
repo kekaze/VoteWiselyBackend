@@ -12,7 +12,7 @@ namespace VoteWiselyBackend.Services
         {
             _httpClient = httpClient;
         }
-        public static string CreateParagraph(PoliticalStance politicalCriteria)
+        public static string CreateParagraph(CandidateCriteria politicalCriteria)
         {
             var labelMap = new Dictionary<string, string>
             {
@@ -24,7 +24,7 @@ namespace VoteWiselyBackend.Services
 
             var sentences = new List<string>();
 
-            foreach (var prop in typeof(PoliticalStance).GetProperties())
+            foreach (var prop in typeof(CandidateCriteria).GetProperties())
             {
                 // Ensure we are working with a list of strings
                 if (prop.PropertyType.IsListOfType(typeof(string)))
@@ -67,7 +67,7 @@ namespace VoteWiselyBackend.Services
             }
         }
 
-        public static Result CreateResultModel(List<ScoredVector> recommendedCandidates, PoliticalStance candidateCriteria)
+        public static Result CreateResultModel(List<ScoredVector> recommendedCandidates, CandidateCriteria candidateCriteria)
         {
             Guid resultReference = InfrastructureService.GetGuid();
             var resultModel = new Result

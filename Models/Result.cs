@@ -14,7 +14,7 @@ namespace VoteWiselyBackend.Models
         [Column("reference")]
         public Guid Reference { get; set; }
         [Column("criteria")]
-        public PoliticalStance Criteria { get; set; }
+        public CandidateCriteria Criteria { get; set; }
         [Column("recommendation")]
         public List<Recommendation> Recommendation { get; set; }
         [Column("type")]

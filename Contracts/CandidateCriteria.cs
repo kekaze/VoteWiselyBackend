@@ -2,7 +2,7 @@
 
 namespace VoteWiselyBackend.Contracts
 {
-    public class PoliticalStance
+    public class CandidateCriteria
     {
         [JsonPropertyName("in_favor")]
         public List<string> InFavor { get; set; } = new List<string>();
