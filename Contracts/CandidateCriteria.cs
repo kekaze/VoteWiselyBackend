@@ -13,8 +13,8 @@ namespace VoteWiselyBackend.Contracts
         [JsonPropertyName("with_reservations")]
         public List<string> WithReservations { get; set; } = new List<string>();
         [JsonPropertyName("not_political_dynasty")]
-        public bool? NotPoliticalDynasty { get; set; } = null;
+        public bool NotPoliticalDynasty { get; set; } = false;
         [JsonPropertyName("no_criminal_records")]
-        public bool? NoCriminalRecords { get; set; } = null;
+        public bool NoCriminalRecords { get; set; } = false;
     }
 }

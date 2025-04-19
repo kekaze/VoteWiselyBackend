@@ -19,6 +19,15 @@ namespace VoteWiselyBackend.Services
             try
             {
                 uint maxSentorialWinners = 12;
+                var metadataFilter = new Metadata();
+                if (candidateCriteria.NotPoliticalDynasty)
+                {
+                    metadataFilter.Add("not_political_dynasty", candidateCriteria.NotPoliticalDynasty);
+                }
+                if (candidateCriteria.NoCriminalRecords)
+                {
+                    metadataFilter.Add("no_criminal_records", candidateCriteria.NoCriminalRecords);
+                }
                 var index = _pineconeClient.Index(host: _indexHost);
                 var queryRequest = new QueryRequest
                 {
@@ -26,11 +35,7 @@ namespace VoteWiselyBackend.Services
                     TopK = maxSentorialWinners,
                     IncludeMetadata = true,
                     Namespace = "senatorial_candidates_2025",
-                    Filter = new Metadata
-                    {
-                        ["not_political_dynasty"] = candidateCriteria.NotPoliticalDynasty,
-                        ["no_criminal_records"] = candidateCriteria.NoCriminalRecords
-                    }
+                    Filter = metadataFilter
                 };
 
                 var queryResponse = await index.QueryAsync(queryRequest);
