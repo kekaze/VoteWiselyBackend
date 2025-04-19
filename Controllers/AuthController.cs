@@ -106,5 +106,13 @@ namespace VoteWiselyBackend.Controllers
         {
             return Ok(new { message = "User is authenticated" });
         }
+
+        [HttpGet("SignOut")]
+        public IActionResult SignOut()
+        {
+            HttpContext.Response.Cookies.Delete("AccessToken");
+            HttpContext.Response.Cookies.Delete("RefreshToken");
+            return Ok(new { message = "User logged out successfully" });
+        }
     }
 }
