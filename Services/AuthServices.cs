@@ -65,5 +65,17 @@ namespace VoteWiselyBackend.Services
             );
             return authResponse;
         }
+
+        public async Task SignOut()
+        {
+            try
+            {
+                await _supabaseClient.Auth.SignOut();
+            }
+            catch (Exception)
+            {
+                throw new Exception("An error occurred during sign out");
+            }
+        }
     }
 }

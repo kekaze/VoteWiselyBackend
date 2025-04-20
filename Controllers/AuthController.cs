@@ -4,6 +4,7 @@ using VoteWiselyBackend.Services;
 using Supabase.Gotrue.Exceptions;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 
 namespace VoteWiselyBackend.Controllers
 {
@@ -108,8 +109,9 @@ namespace VoteWiselyBackend.Controllers
         }
 
         [HttpGet("SignOut")]
-        public IActionResult SignOut()
+        public async Task<IActionResult> SignOut()
         {
+            await _authServices.SignOut();
             HttpContext.Response.Cookies.Delete("AccessToken");
             HttpContext.Response.Cookies.Delete("RefreshToken");
             return Ok(new { message = "User logged out successfully" });
