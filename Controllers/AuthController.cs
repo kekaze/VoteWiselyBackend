@@ -43,7 +43,7 @@ namespace VoteWiselyBackend.Controllers
                 GoTrueExMessage? exceptionMessage = JsonConvert.DeserializeObject<GoTrueExMessage>(ex.Message);
                 return StatusCode(422, new { message = exceptionMessage?.Msg });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, new { message = "An error occurred during registration" } );
             }
@@ -109,7 +109,7 @@ namespace VoteWiselyBackend.Controllers
         }
 
         [HttpGet("SignOut")]
-        public async Task<IActionResult> SignOut()
+        public new async Task<IActionResult> SignOut()
         {
             await _authServices.SignOut();
             HttpContext.Response.Cookies.Delete("AccessToken");
