@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Supabase.Gotrue;
-using Supabase.Interfaces;
+﻿using Supabase.Gotrue;
 using System.Text.RegularExpressions;
 using VoteWiselyBackend.Contracts;
 

@@ -4,7 +4,6 @@ using VoteWiselyBackend.Services;
 using Supabase.Gotrue.Exceptions;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
-using System.Threading.Tasks;
 using Supabase.Gotrue;
 
 namespace VoteWiselyBackend.Controllers
