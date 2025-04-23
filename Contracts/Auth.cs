@@ -22,4 +22,9 @@ namespace VoteWiselyBackend.Contracts
     {
         public string? Msg { get; set; }
     }
+
+    public class OAuthSignInRequest
+    {
+        
+    }
 }

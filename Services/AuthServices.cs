@@ -77,5 +77,17 @@ namespace VoteWiselyBackend.Services
                 throw new Exception("An error occurred during sign out");
             }
         }
+    
+        public async Task<ProviderAuthState?> SignInWithOAuth(OAuthSignInRequest request, Constants.Provider provider)
+        {
+            var authResponse = await _supabaseClient.Auth.SignIn(
+                provider: provider,
+                options: new SignInOptions
+                {
+                    RedirectTo = ""
+                }
+            );
+            return authResponse;
+        }
     }
 }

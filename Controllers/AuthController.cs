@@ -5,6 +5,7 @@ using Supabase.Gotrue.Exceptions;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
+using Supabase.Gotrue;
 
 namespace VoteWiselyBackend.Controllers
 {
@@ -115,6 +116,29 @@ namespace VoteWiselyBackend.Controllers
             HttpContext.Response.Cookies.Delete("AccessToken");
             HttpContext.Response.Cookies.Delete("RefreshToken");
             return Ok(new { message = "User logged out successfully" });
+        }
+    
+        [HttpPost("OAuthSignIn")]
+        public async Task<IActionResult> OAuthSignIn([FromBody] OAuthSignInRequest request)
+        {
+            try
+            {
+                var session = await _authServices.SignInWithOAuth(request, Constants.Provider.Google);
+                if (session == null)
+                {
+                    return BadRequest(new { message = "Invalid credentials" });
+                }
+
+                return Ok(new { message = "User logged in successfully" });
+            }
+            catch (GotrueException ex)
+            {
+                return StatusCode(400, new { message = ex.Message });
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { message = "An error occurred during login" } );
+            }
         }
     }
 }
