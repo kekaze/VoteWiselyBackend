@@ -24,7 +24,7 @@ namespace VoteWiselyBackend.Controllers
         {
             try
             {
-                var validatedRequest = _authServices.ValidateSignUpRequest(request);
+                var validatedRequest = await _authServices.ValidateSignUpRequest(request);
                 if (!validatedRequest.valid)
                 {
                     return BadRequest(new { validatedRequest.message });
