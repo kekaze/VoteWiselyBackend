@@ -20,13 +20,16 @@ namespace VoteWiselyBackend.Services
                 return new HCaptchaVerificationResponse { Success = false, ErrorCodes = new List<string> { "missing-input-response" } };
             }
 
+            var data = new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                { "secret", _secretKey },
+                { "response", token },
+            });
+
             try
             {
-                var response = await _httpClient.PostAsJsonAsync("https://api.hcaptcha.com/siteverify", new HCaptchaVerificationRequest
-                {
-                    Secret = _secretKey,
-                    Response = token
-                });
+
+                var response = await _httpClient.PostAsync("https://api.hcaptcha.com/siteverify", data);
                 response.EnsureSuccessStatusCode();
 
                 var jsonResponse = await response.Content.ReadAsStringAsync();

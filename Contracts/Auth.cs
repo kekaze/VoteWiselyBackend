@@ -16,12 +16,17 @@ namespace VoteWiselyBackend.Contracts
         [Required]
         [JsonPropertyName("captcha_token")]
         public string CaptchaToken { get; set; } = string.Empty;
+        public string Username { get; set; } = string.Empty;
     }
 
     public class LoginRequest
     {
         public required string Email { get; set; }
         public required string Password { get; set; }
+        [Required]
+        [JsonPropertyName("captcha_token")]
+        public string CaptchaToken { get; set; } = string.Empty;
+        public string Username { get; set; } = string.Empty;
     }
 
     public class GoTrueExMessage
@@ -39,11 +44,5 @@ namespace VoteWiselyBackend.Contracts
         public string Hostname { get; set; } = string.Empty;
         [JsonPropertyName("error-codes")]
         public List<string> ErrorCodes { get; set; } = new List<string>();
-    }
-
-    public class HCaptchaVerificationRequest
-    {
-        public string Secret { get; set; } = string.Empty;
-        public string Response { get; set; } = string.Empty;
     }
 }
