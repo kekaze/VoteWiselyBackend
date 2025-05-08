@@ -24,7 +24,7 @@ namespace VoteWiselyBackend.Controllers
         {
             try
             {
-                var validatedRequest = _authServices.ValidateSignUpRequest(request);
+                var validatedRequest = await _authServices.ValidateSignUpRequest(request);
                 if (!validatedRequest.valid)
                 {
                     return BadRequest(new { validatedRequest.message });
@@ -54,7 +54,7 @@ namespace VoteWiselyBackend.Controllers
         {
             try
             {
-                bool validRequest = _authServices.ValidateAuthCredentials(request);
+                bool validRequest = await _authServices.ValidateAuthCredentials(request);
                 if (!validRequest)
                 {
                     return BadRequest(new { message = "Something's wrong with your request" });

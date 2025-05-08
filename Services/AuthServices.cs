@@ -9,13 +9,25 @@ namespace VoteWiselyBackend.Services
     public class AuthServices
     {
         private readonly Supabase.Client _supabaseClient;
-        public AuthServices(Supabase.Client supabaseClient)
+        private readonly HCaptchaService _hCaptchaService;
+        public AuthServices(Supabase.Client supabaseClient, HCaptchaService hCaptchaService)
         {
             _supabaseClient = supabaseClient;
+            _hCaptchaService = hCaptchaService;
         }
-        public (bool valid, string? message) ValidateSignUpRequest(SignUpRequest request)
+        public async Task<(bool valid, string? message)> ValidateSignUpRequest(SignUpRequest request)
         {
-            if (string.IsNullOrEmpty(request.FullName) || string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
+            var verificationResponse = await _hCaptchaService.VerifyHCaptchaAsync(request.CaptchaToken);
+            if (verificationResponse == null || !verificationResponse.Success)
+            {
+                return (false, "Captcha verification failed");
+            }
+
+            if (!string.IsNullOrEmpty(request.Username))
+            {
+                return (false, "Something went wrong.");
+            }    
+            else if (string.IsNullOrEmpty(request.FullName) || string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
             {
                 return (false, "All fields are required");
             }
@@ -51,8 +63,14 @@ namespace VoteWiselyBackend.Services
             return authResponse;
         }
 
-        public bool ValidateAuthCredentials(LoginRequest request)
+        public async Task<bool> ValidateAuthCredentials(LoginRequest request)
         {
+            var verificationResponse = await _hCaptchaService.VerifyHCaptchaAsync(request.CaptchaToken);
+            if (verificationResponse == null || !verificationResponse.Success || !string.IsNullOrEmpty(request.Username))
+            {
+                return false;
+            }
+
             return !string.IsNullOrEmpty(request.Email) &&
                    !string.IsNullOrEmpty(request.Password);
         }
