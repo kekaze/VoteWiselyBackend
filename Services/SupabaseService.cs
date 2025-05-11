@@ -3,10 +3,10 @@ using VoteWiselyBackend.Models;
 
 namespace VoteWiselyBackend.Services
 {
-    public class SupabaseServices
+    public class SupabaseService
     {
         private readonly Supabase.Client _supabaseClient;
-        public SupabaseServices(Supabase.Client supabaseClient)
+        public SupabaseService(Supabase.Client supabaseClient)
         {
             _supabaseClient = supabaseClient;
         }

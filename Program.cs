@@ -50,12 +50,12 @@ await builder.Services.AddSupabaseClientAsync();
 builder.Services.AddSingleton(sp =>
 {
     PineconeClient pineconeClient = new PineconeClient(pineconeApiKey!);
-    return new PineconeServices(pineconeClient, pineconeHost!);
+    return new PineconeService(pineconeClient, pineconeHost!);
 });
 
-builder.Services.AddScoped<SupabaseServices>();
-builder.Services.AddScoped<AuthServices>();
-builder.Services.AddScoped<DataTransformationServices>();
+builder.Services.AddScoped<SupabaseService>();
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<DataTransformationService>();
 builder.Services.AddScoped<HCaptchaService>();
 
 builder.Services.AddHttpClient();

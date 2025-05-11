@@ -5,10 +5,10 @@ using VoteWiselyBackend.Models;
 
 namespace VoteWiselyBackend.Services
 {
-    public class DataTransformationServices
+    public class DataTransformationService
     {
         private readonly HttpClient _httpClient;
-        public DataTransformationServices(HttpClient httpClient) 
+        public DataTransformationService(HttpClient httpClient) 
         {
             _httpClient = httpClient;
         }

@@ -11,8 +11,8 @@ namespace VoteWiselyBackend.Controllers
     [Route("api/v1/[controller]")]
     public class ResultsController : Controller
     {
-        private readonly SupabaseServices _supabaseServices;
-        public ResultsController(SupabaseServices supabaseService)
+        private readonly SupabaseService _supabaseServices;
+        public ResultsController(SupabaseService supabaseService)
         {
             _supabaseServices = supabaseService;
         }

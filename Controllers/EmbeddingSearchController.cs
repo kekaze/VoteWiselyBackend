@@ -12,14 +12,14 @@ namespace VoteWiselyBackend.Controllers
     {
 
         private readonly HttpClient _httpClient;
-        private readonly PineconeServices _pineconeService;
-        private readonly SupabaseServices _supabaseServices;
-        private readonly DataTransformationServices _dataTransformationServices;
-        public EmbeddingSearchController(HttpClient httpClient, PineconeServices pineconeService, SupabaseServices supabaseServices, DataTransformationServices dataTransformationServices)
+        private readonly PineconeService _pineconeService;
+        private readonly SupabaseService _supabaseService;
+        private readonly DataTransformationService _dataTransformationServices;
+        public EmbeddingSearchController(HttpClient httpClient, PineconeService pineconeService, SupabaseService supabaseService, DataTransformationService dataTransformationServices)
         {
             _httpClient = httpClient;
             _pineconeService = pineconeService;
-            _supabaseServices = supabaseServices;
+            _supabaseService = supabaseService;
             _dataTransformationServices = dataTransformationServices;
         }
 
@@ -30,14 +30,14 @@ namespace VoteWiselyBackend.Controllers
             try
             {
                 var cookies = Request.Cookies;
-                await _supabaseServices.SetSession(cookies);
+                await _supabaseService.SetSession(cookies);
 
-                string criteriaParagraph = DataTransformationServices.CreateParagraph(candidateCriteria);
+                string criteriaParagraph = DataTransformationService.CreateParagraph(candidateCriteria);
                 EmbeddingResponse transformedCriteria = await _dataTransformationServices.EmbedCriteria(criteriaParagraph);
                 List<ScoredVector> recommendedCandidates = await _pineconeService.QueryIndexAsync(transformedCriteria.Embedding, candidateCriteria);
 
-                var resultModel = DataTransformationServices.CreateResultModel(recommendedCandidates, candidateCriteria);
-                var saveResponse = await _supabaseServices.SaveRecommendation(resultModel);
+                var resultModel = DataTransformationService.CreateResultModel(recommendedCandidates, candidateCriteria);
+                var saveResponse = await _supabaseService.SaveRecommendation(resultModel);
 
                 return Ok(new { reference = saveResponse.Model!.Reference, result = saveResponse.Content });
             }

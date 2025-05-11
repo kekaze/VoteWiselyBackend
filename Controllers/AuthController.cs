@@ -12,11 +12,11 @@ namespace VoteWiselyBackend.Controllers
     [Route("api/v1/[controller]")]
     public class AuthController : Controller
     {
-        private readonly AuthServices _authServices;
+        private readonly AuthService _authService;
 
-        public AuthController(AuthServices authServices)
+        public AuthController(AuthService authService)
         {
-            _authServices = authServices;
+            _authService = authService;
         }
 
         [HttpPost("Signup")]
@@ -24,13 +24,13 @@ namespace VoteWiselyBackend.Controllers
         {
             try
             {
-                var validatedRequest = await _authServices.ValidateSignUpRequest(request);
+                var validatedRequest = await _authService.ValidateSignUpRequest(request);
                 if (!validatedRequest.valid)
                 {
                     return BadRequest(new { validatedRequest.message });
                 }
 
-                var savedUser = await _authServices.SignUpUser(request);
+                var savedUser = await _authService.SignUpUser(request);
                 if (savedUser?.User == null)
                 {
                     return BadRequest(new { message = "Failed to create user" } );
@@ -54,13 +54,13 @@ namespace VoteWiselyBackend.Controllers
         {
             try
             {
-                bool validRequest = await _authServices.ValidateAuthCredentials(request);
+                bool validRequest = await _authService.ValidateAuthCredentials(request);
                 if (!validRequest)
                 {
                     return BadRequest(new { message = "Something's wrong with your request" });
                 }
 
-                var session = await _authServices.SignInUser(request);
+                var session = await _authService.SignInUser(request);
                 if (session == null)
                 {
                     return BadRequest(new { message = "Invalid credentials" });
@@ -111,7 +111,7 @@ namespace VoteWiselyBackend.Controllers
         [HttpGet("SignOut")]
         public new async Task<IActionResult> SignOut()
         {
-            await _authServices.SignOut();
+            await _authService.SignOut();
             HttpContext.Response.Cookies.Delete("AccessToken");
             HttpContext.Response.Cookies.Delete("RefreshToken");
             return Ok(new { message = "User logged out successfully" });

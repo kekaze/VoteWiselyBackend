@@ -6,11 +6,11 @@ using VoteWiselyBackend.Contracts;
 
 namespace VoteWiselyBackend.Services
 {
-    public class AuthServices
+    public class AuthService
     {
         private readonly Supabase.Client _supabaseClient;
         private readonly HCaptchaService _hCaptchaService;
-        public AuthServices(Supabase.Client supabaseClient, HCaptchaService hCaptchaService)
+        public AuthService(Supabase.Client supabaseClient, HCaptchaService hCaptchaService)
         {
             _supabaseClient = supabaseClient;
             _hCaptchaService = hCaptchaService;
