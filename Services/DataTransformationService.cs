@@ -49,6 +49,7 @@ namespace VoteWiselyBackend.Services
 
         public async Task<EmbeddingResponse> EmbedCriteria(string criteria)
         {
+            var embedServerBaseUrl = Environment.GetEnvironmentVariable("EMBED_SERVER_BASE_URL");
             try
             {
                 if (string.IsNullOrEmpty(criteria))
@@ -56,7 +57,7 @@ namespace VoteWiselyBackend.Services
                     throw new ArgumentException("Criteria cannot be null or empty.", nameof(criteria));
                 }
 
-                var embeddingString = await _httpClient.PostAsJsonAsync("http://127.0.0.1:8000/embed", new { criteria });
+                var embeddingString = await _httpClient.PostAsJsonAsync($"{embedServerBaseUrl}/embed", new { criteria });
                 var embeddingObject = await embeddingString.Content.ReadFromJsonAsync<EmbeddingResponse>();
 
                 return embeddingObject!;
