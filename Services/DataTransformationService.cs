@@ -8,9 +8,11 @@ namespace VoteWiselyBackend.Services
     public class DataTransformationService
     {
         private readonly HttpClient _httpClient;
-        public DataTransformationService(HttpClient httpClient) 
+        private readonly IConfiguration _configuration;
+        public DataTransformationService(HttpClient httpClient, IConfiguration configuration) 
         {
             _httpClient = httpClient;
+            _configuration = configuration;
         }
         public static string CreateParagraph(CandidateCriteria politicalCriteria)
         {
@@ -49,7 +51,8 @@ namespace VoteWiselyBackend.Services
 
         public async Task<EmbeddingResponse> EmbedCriteria(string criteria)
         {
-            var embedServerBaseUrl = Environment.GetEnvironmentVariable("EMBED_SERVER_BASE_URL");
+            var embedServerBaseUrl = _configuration["EmbedServerBaseUrl"]
+                ?? Environment.GetEnvironmentVariable("EMBED_SERVER_BASE_URL");
             try
             {
                 if (string.IsNullOrEmpty(criteria))

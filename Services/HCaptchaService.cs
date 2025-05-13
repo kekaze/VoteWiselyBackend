@@ -7,10 +7,13 @@ namespace VoteWiselyBackend.Services
     {
         private readonly HttpClient _httpClient;
         private readonly string _secretKey;
-        public HCaptchaService(IHttpClientFactory httpClientFactory)
+        private readonly IConfiguration _configuration;
+        public HCaptchaService(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
+            _configuration = configuration;
             _httpClient = httpClientFactory.CreateClient();
-            _secretKey = Environment.GetEnvironmentVariable("HCAPTCHA_SECRET_KEY") ?? throw new ArgumentNullException("HCAPTCHA_SECRET_KEY");
+            _secretKey = _configuration["HCaptch:SecretKey"]
+                ?? Environment.GetEnvironmentVariable("HCAPTCHA_SECRET_KEY") ?? throw new ArgumentNullException("HCAPTCHA_SECRET_KEY");
         }
 
         public async Task<HCaptchaVerificationResponse?> VerifyHCaptchaAsync(string token)

@@ -15,7 +15,7 @@ namespace VoteWiselyBackend.Factories.Implementations
         {
             var supabaseUrl = _configuration["Supabase:Url"]
                 ?? Environment.GetEnvironmentVariable("SUPABASE_URL");
-            var supabaseKey = _configuration["Supabase:Key"]
+            var supabaseKey = _configuration["Supabase:ApiKey"]
                 ?? Environment.GetEnvironmentVariable("SUPABASE_KEY");
 
             if (string.IsNullOrEmpty(supabaseUrl) || string.IsNullOrEmpty(supabaseKey))

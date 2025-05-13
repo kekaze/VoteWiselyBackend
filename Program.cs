@@ -9,11 +9,11 @@ using VoteWiselyBackend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var supabaseUrl = Environment.GetEnvironmentVariable("SUPABASE_URL");
-var supabaseSigningKey = Environment.GetEnvironmentVariable("SUPABASE_SIGNING_KEY");
-var pineconeApiKey = Environment.GetEnvironmentVariable("PINECONE_API_KEY");
-var pineconeHost = Environment.GetEnvironmentVariable("PINECONE_INDEX_HOST");
-var originUrl = Environment.GetEnvironmentVariable("ORIGIN_URL");
+var supabaseUrl = builder.Configuration["Supabase:Url"];
+var supabaseSigningKey = builder.Configuration["Supabase:SigningKey"];
+var pineconeApiKey = builder.Configuration["Pinecone:ApiKey"];
+var pineconeHost = builder.Configuration["Pinecone:Host"];
+var originUrl = builder.Configuration["OriginUrl"];
 
 if (string.IsNullOrEmpty(supabaseUrl) ||
     string.IsNullOrEmpty(supabaseSigningKey) ||
