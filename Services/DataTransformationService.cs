@@ -51,8 +51,7 @@ namespace VoteWiselyBackend.Services
 
         public async Task<EmbeddingResponse> EmbedCriteria(string criteria)
         {
-            var embedServerBaseUrl = _configuration["EmbedServerBaseUrl"]
-                ?? Environment.GetEnvironmentVariable("EMBED_SERVER_BASE_URL");
+            var embedServerBaseUrl = _configuration["EmbedServerBaseUrl"];
             try
             {
                 if (string.IsNullOrEmpty(criteria))

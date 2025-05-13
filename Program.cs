@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Pinecone;
 using System.Text;
@@ -14,12 +15,14 @@ var supabaseSigningKey = builder.Configuration["Supabase:SigningKey"];
 var pineconeApiKey = builder.Configuration["Pinecone:ApiKey"];
 var pineconeHost = builder.Configuration["Pinecone:Host"];
 var originUrl = builder.Configuration["OriginUrl"];
+var hcaptchaSecretKey = builder.Configuration["HCaptcha:SecretKey"];
 
 if (string.IsNullOrEmpty(supabaseUrl) ||
     string.IsNullOrEmpty(supabaseSigningKey) ||
     string.IsNullOrEmpty(pineconeApiKey) ||
     string.IsNullOrEmpty(pineconeHost) ||
-    string.IsNullOrEmpty(originUrl)
+    string.IsNullOrEmpty(originUrl) ||
+    string.IsNullOrEmpty(hcaptchaSecretKey)
 )
 {
     throw new InvalidOperationException("An environment variable is not configured yet.");
@@ -56,7 +59,12 @@ builder.Services.AddSingleton(sp =>
 builder.Services.AddScoped<SupabaseService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<DataTransformationService>();
-builder.Services.AddScoped<HCaptchaService>();
+builder.Services.AddScoped<HCaptchaService>(sp =>
+    new HCaptchaService(
+        sp.GetRequiredService<IHttpClientFactory>(),
+        hcaptchaSecretKey
+    )
+);
 
 builder.Services.AddHttpClient();
 

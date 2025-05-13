@@ -3,18 +3,9 @@ using VoteWiselyBackend.Contracts;
 
 namespace VoteWiselyBackend.Services
 {
-    public class HCaptchaService
+    public class HCaptchaService(IHttpClientFactory httpClientFactory, string secretKey)
     {
-        private readonly HttpClient _httpClient;
-        private readonly string _secretKey;
-        private readonly IConfiguration _configuration;
-        public HCaptchaService(IHttpClientFactory httpClientFactory, IConfiguration configuration)
-        {
-            _configuration = configuration;
-            _httpClient = httpClientFactory.CreateClient();
-            _secretKey = _configuration["HCaptch:SecretKey"]
-                ?? Environment.GetEnvironmentVariable("HCAPTCHA_SECRET_KEY") ?? throw new ArgumentNullException("HCAPTCHA_SECRET_KEY");
-        }
+        private readonly HttpClient _httpClient = httpClientFactory.CreateClient();
 
         public async Task<HCaptchaVerificationResponse?> VerifyHCaptchaAsync(string token)
         {
@@ -25,7 +16,7 @@ namespace VoteWiselyBackend.Services
 
             var data = new FormUrlEncodedContent(new Dictionary<string, string>
             {
-                { "secret", _secretKey },
+                { "secret", secretKey },
                 { "response", token },
             });
 
